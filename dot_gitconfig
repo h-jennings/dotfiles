@@ -1,0 +1,11 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Hunter Jennings
+	email = jenningsdhunter@gmail.com
+[core]
+	editor = nvim
+[rerere]
+    enabled = true
+[rebase]
+	updateRefs = true
