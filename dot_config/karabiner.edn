@@ -1,0 +1,83 @@
+;; !  | means mandatory
+;; #  | means optional
+;; C  | left_command
+;; T  | left_control
+;; O  | left_option
+;; S  | left_shift
+;; F  | fn
+;; Q  | right_command
+;; W  | right_control
+;; E  | right_option
+;; R  | right_shift
+;; !! | mandatory command + control + optional + shift (hyper)
+;; ## | optional any
+
+{
+  :profiles {:Default {:default true :sim 200 :delay 800 :alone 800 :held 800}}
+  :layers {
+           :caps-mode {:key :caps_lock :alone {:key :escape}}
+           :media-mode {:key :grave_accent_and_tilde}
+  }
+  :simlayers {
+              :toggle-mode {:key :t}
+              :window-mode {:key :w}
+              :desktop-mode {:key :d}
+  }
+  :main [
+    {
+      :des "toggle-mode"
+      :rules [
+        :toggle-mode
+        [:d {:key :d :modi [:left_command :left_option]}]
+        [:n {:key :t :modi [:right_control :left_command :left_shift]}]
+      ]
+    }
+    {
+      :des "media-mode"
+      :rules [
+        :media-mode
+        [:k :volume_increment]
+        [:j :volume_decrement]
+        [:m :mute]
+      ]
+    }
+    {
+      :des "window-mode"
+      :rules [
+        :window-mode
+        [:l {:key :right_arrow :modi [:control :left_option]}] ;; right
+        [:h {:key :left_arrow :modi [:control :left_option]}] ;; left
+        [:j {:key :down_arrow :modi [:control :left_option]}] ;; down
+        [:k {:key :up_arrow :modi [:control :left_option]}] ;; up
+        [:c {:key :c :modi [:control :left_option]}] ;; center
+        [:m {:key :return_or_enter :modi [:control :left_option]}] ;; maximize
+        [:r {:key :delete_or_backspace :modi [:control :left_option]}] ;; reset
+      ]
+    }
+    {
+      :des "desktop-mode"
+      :rules [
+        :desktop-mode
+        [:l {:key :right_arrow :modi [:control]}] ;; right
+        [:h {:key :left_arrow :modi [:control]}] ;; left
+        [:k {:key :mission_control }];; mission control
+        [:j {:key :down_arrow :modi [:control] }];; app expose
+      ]
+    }
+    {
+      :des "caps-mode"
+      :rules [
+        :caps-mode
+        [:h :left_arrow]
+        [:j :down_arrow]
+        [:k :up_arrow]
+        [:l :right_arrow]
+      ]
+    }
+    { 
+      :des "simultaneous j l press to F19" 
+      :rules [
+        [[:left_command :right_command] :f19]
+      ]
+    }
+  ]}
