@@ -77,8 +77,8 @@ return {
 					-- Navigation
 					map("n", "gd", vim.lsp.buf.definition, "Goto Definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Goto Declaration")
-					map("n", "gi", "<cmd>Lspsaga finder imp<cr>", "Goto Implementations")
-					map("n", "gA", "<cmd>Lspsaga finder<cr>", "Find References")
+					map("n", "gi", "<cmd>Telescope lsp_implementations<cr>", "Goto Implementations")
+					map("n", "gA", "<cmd>Telescope lsp_references<cr>", "Find References")
 					map("n", "gy", vim.lsp.buf.type_definition, "Type Definition")
 
 					-- Diagnostics
@@ -88,8 +88,8 @@ return {
 					map("n", "gS", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", "Workspace symbols")
 
 					-- Call hierarchy
-					map("n", "gic", "<cmd>Lspsaga incoming_calls<cr>", "Incoming calls")
-					map("n", "goc", "<cmd>Lspsaga outgoing_calls<cr>", "Outgoing calls")
+					map("n", "gic", "<cmd>Telescope lsp_incoming_calls<cr>", "Incoming calls")
+					map("n", "goc", "<cmd>Telescope lsp_outgoing_calls<cr>", "Outgoing calls")
 
 					-- Actions
 					map("n", "gh", vim.lsp.buf.hover, "Hover")
