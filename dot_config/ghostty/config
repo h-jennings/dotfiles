@@ -1,0 +1,21 @@
+font-family=TX-02
+font-size=14
+adjust-cell-height = 20%
+font-feature = -liga
+theme=light:kanso-pearl,dark:kanso-ink
+
+cursor-style=block
+shell-integration-features = no-cursor
+cursor-style-blink=false
+
+
+window-padding-balance=true
+macos-titlebar-style=transparent
+scrollback-limit = 1000000
+mouse-hide-while-typing=true
+
+keybind = ctrl+n=new_window
+
+window-save-state = always
+keybind = shift+enter=text:\n
+maximize = true
