@@ -13,6 +13,9 @@ return {
 				{ section = "startup" },
 			},
 		},
+		lazygit = {
+			enabled = true,
+		},
 		picker = {
 			layout = {
 				layout = {
@@ -71,6 +74,21 @@ return {
 				require("snacks").picker.grep()
 			end,
 			desc = "Multi grep (pattern  glob)",
+		},
+		{
+			"<leader>*",
+			function()
+				require("snacks").picker.grep_word()
+			end,
+			desc = "Grep word under cursor",
+			mode = { "n", "x" },
+		},
+		{
+			"<leader>gg",
+			function()
+				require("snacks").lazygit()
+			end,
+			desc = "Open lazygit",
 		},
 	},
 }
