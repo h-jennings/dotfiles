@@ -13,15 +13,36 @@ return {
 				{ section = "startup" },
 			},
 		},
+		indent = {
+			enabled = true,
+			animate = {
+				enabled = false,
+			},
+			scope = {
+				enabled = true,
+			},
+		},
+		input = {
+			enabled = true,
+		},
 		lazygit = {
 			enabled = true,
 		},
+		terminal = {
+			enabled = true,
+		},
 		picker = {
+			matcher = {
+				frecency = true,
+				filename_bonus = true,
+				cwd_bonus = true,
+			},
 			layout = {
+				cycle = false,
 				layout = {
 					backdrop = false,
-					width = 0.8,
-					height = 0.95,
+					width = 0.6,
+					height = 0.9,
 					box = "vertical",
 					border = "rounded",
 					title = "{title} {live} {flags}",
@@ -89,6 +110,14 @@ return {
 				require("snacks").lazygit()
 			end,
 			desc = "Open lazygit",
+		},
+		{
+			"<C-`>",
+			function()
+				require("snacks").terminal.toggle()
+			end,
+			desc = "Toggle terminal",
+			mode = { "n", "t" },
 		},
 	},
 }

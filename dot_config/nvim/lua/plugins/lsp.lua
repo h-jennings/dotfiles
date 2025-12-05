@@ -77,19 +77,32 @@ return {
 					-- Navigation
 					map("n", "gd", vim.lsp.buf.definition, "Goto Definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Goto Declaration")
-					map("n", "gi", function() require("snacks").picker.lsp_implementations() end, "Goto Implementations")
-					map("n", "gA", function() require("snacks").picker.lsp_references() end, "Find References")
+					map("n", "gi", function()
+						require("snacks").picker.lsp_implementations()
+					end, "Goto Implementations")
+					map("n", "gA", function()
+						require("snacks").picker.lsp_references()
+					end, "Find References")
 					map("n", "gy", vim.lsp.buf.type_definition, "Type Definition")
 
 					-- Diagnostics
 					map("n", "gl", vim.diagnostic.open_float, "Line diagnostics")
 
 					-- Symbols
-					map("n", "gS", function() require("snacks").picker.lsp_symbols() end, "Workspace symbols")
+					map("n", "gs", function()
+						require("snacks").picker.lsp_symbols()
+					end, "Buffer symbols")
+					map("n", "gS", function()
+						require("snacks").picker.lsp_workspace_symbols()
+					end, "Buffer symbols")
 
 					-- Call hierarchy
-					map("n", "gic", function() require("snacks").picker.lsp_incoming_calls() end, "Incoming calls")
-					map("n", "goc", function() require("snacks").picker.lsp_outgoing_calls() end, "Outgoing calls")
+					map("n", "gic", function()
+						require("snacks").picker.lsp_incoming_calls()
+					end, "Incoming calls")
+					map("n", "goc", function()
+						require("snacks").picker.lsp_outgoing_calls()
+					end, "Outgoing calls")
 
 					-- Actions
 					map("n", "gh", vim.lsp.buf.hover, "Hover")
