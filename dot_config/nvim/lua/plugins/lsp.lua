@@ -77,19 +77,19 @@ return {
 					-- Navigation
 					map("n", "gd", vim.lsp.buf.definition, "Goto Definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Goto Declaration")
-					map("n", "gi", "<cmd>Telescope lsp_implementations<cr>", "Goto Implementations")
-					map("n", "gA", "<cmd>Telescope lsp_references<cr>", "Find References")
+					map("n", "gi", function() require("snacks").picker.lsp_implementations() end, "Goto Implementations")
+					map("n", "gA", function() require("snacks").picker.lsp_references() end, "Find References")
 					map("n", "gy", vim.lsp.buf.type_definition, "Type Definition")
 
 					-- Diagnostics
 					map("n", "gl", vim.diagnostic.open_float, "Line diagnostics")
 
 					-- Symbols
-					map("n", "gS", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", "Workspace symbols")
+					map("n", "gS", function() require("snacks").picker.lsp_symbols() end, "Workspace symbols")
 
 					-- Call hierarchy
-					map("n", "gic", "<cmd>Telescope lsp_incoming_calls<cr>", "Incoming calls")
-					map("n", "goc", "<cmd>Telescope lsp_outgoing_calls<cr>", "Outgoing calls")
+					map("n", "gic", function() require("snacks").picker.lsp_incoming_calls() end, "Incoming calls")
+					map("n", "goc", function() require("snacks").picker.lsp_outgoing_calls() end, "Outgoing calls")
 
 					-- Actions
 					map("n", "gh", vim.lsp.buf.hover, "Hover")
@@ -213,6 +213,9 @@ return {
 			local cmp = require("cmp")
 			local cmp_select = { behavior = cmp.SelectBehavior.Insert }
 			cmp.setup({
+				completion = {
+					autocomplete = false, -- Disable automatic completion popup
+				},
 				experimental = {
 					ghost_text = false, -- Disabled to avoid conflict with Copilot inline suggestions
 				},
