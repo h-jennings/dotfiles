@@ -64,6 +64,21 @@ return {
 					hidden = true,
 					exclude = { "node_modules/*" },
 				},
+				lsp_symbols = {
+					filter = {
+						default = {
+							"Class",
+							"Constructor",
+							"Enum",
+							"Function",
+							"Interface",
+							"Method",
+							"Struct",
+						},
+						markdown = true,
+						help = true,
+					},
+				},
 			},
 		},
 	},
