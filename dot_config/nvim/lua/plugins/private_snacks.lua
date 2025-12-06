@@ -81,6 +81,9 @@ return {
 				},
 			},
 		},
+		gh = {
+			enabled = true,
+		},
 	},
 	keys = {
 		{
@@ -133,6 +136,20 @@ return {
 			end,
 			desc = "Toggle terminal",
 			mode = { "n", "t" },
+		},
+		{
+			"<leader>gho",
+			function()
+				require("snacks").picker.gh_pr()
+			end,
+			desc = "GitHub PRs (open)",
+		},
+		{
+			"<leader>gha",
+			function()
+				require("snacks").picker.gh_pr({ state = "all" })
+			end,
+			desc = "GitHub PRs (all)",
 		},
 	},
 }
