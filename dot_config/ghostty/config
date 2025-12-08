@@ -14,12 +14,9 @@ macos-titlebar-style=transparent
 scrollback-limit = 1000000
 mouse-hide-while-typing=true
 
-# Disable ctrl+n to avoid conflicts with tmux keybinds
-keybind = ctrl+n=unbind
-
-# Disable action keybind to avoid conflicts with tmux (C-a prefix)
-keybind = ctrl+shift+a=unbind
-
 window-save-state = always
-keybind = shift+enter=text:\n
 maximize = true
+
+keybind = shift+enter=text:\n
+keybind = super+n=unbind
+keybind = ctrl+n=unbind
