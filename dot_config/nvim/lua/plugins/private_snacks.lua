@@ -85,6 +85,17 @@ return {
 			enabled = true,
 		},
 	},
+	-- FZF SEARCH SYNTAX (use during interactive search):
+	--   Inline filtering examples:
+	--     file:lua$ searchterm    - Filter by filename ending in 'lua', then search
+	--     searchterm -- -g=*.lua  - Add ripgrep glob option interactively
+	--
+	--   Built-in toggles:
+	--     <alt-h> - toggle hidden files
+	--     <alt-i> - toggle ignored files
+	--     <alt-f> - toggle follow symlinks
+	--     <alt-r> - toggle regex mode
+	--     <alt-g> - toggle live mode
 	keys = {
 		{
 			"<leader>ff",
@@ -101,6 +112,35 @@ return {
 			desc = "Find files tracked with Git",
 		},
 		{
+			"<leader>fd",
+			function()
+				vim.ui.input({ prompt = "Directory: ", default = vim.fn.getcwd(), completion = "dir" }, function(dir)
+					if dir and dir ~= "" then
+						require("snacks").picker.files({ cwd = vim.fn.expand(dir) })
+					end
+				end)
+			end,
+			desc = "Find files in directory",
+		},
+		{
+			"<leader>fp",
+			function()
+				vim.ui.input({ prompt = "Pattern (e.g. *.lua): " }, function(pattern)
+					if pattern and pattern ~= "" then
+						require("snacks").picker.files({ glob = pattern })
+					end
+				end)
+			end,
+			desc = "Find files by pattern",
+		},
+		{
+			"<leader>fk",
+			function()
+				require("snacks").picker.keymaps()
+			end,
+			desc = "Search keymaps",
+		},
+		{
 			"<leader>o",
 			function()
 				require("snacks").picker.buffers()
@@ -113,6 +153,36 @@ return {
 				require("snacks").picker.grep()
 			end,
 			desc = "Multi grep (pattern  glob)",
+		},
+		{
+			"<leader>gd",
+			function()
+				vim.ui.input({ prompt = "Directory: ", default = vim.fn.getcwd(), completion = "dir" }, function(dir)
+					if dir and dir ~= "" then
+						require("snacks").picker.grep({ cwd = vim.fn.expand(dir) })
+					end
+				end)
+			end,
+			desc = "Grep in directory",
+		},
+		{
+			"<leader>gp",
+			function()
+				vim.ui.input({ prompt = "Pattern (e.g. *.lua): " }, function(pattern)
+					if pattern and pattern ~= "" then
+						require("snacks").picker.grep({ glob = pattern })
+					end
+				end)
+			end,
+			desc = "Grep by pattern",
+		},
+		{
+			"<leader>gb",
+			function()
+				local buf_dir = vim.fn.expand("%:p:h")
+				require("snacks").picker.grep({ cwd = buf_dir })
+			end,
+			desc = "Grep in buffer's directory",
 		},
 		{
 			"<leader>*",

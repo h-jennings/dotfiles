@@ -4,7 +4,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
       "mcp__docs__resolve-library-id",
-      "mcp__docs__get-library-docs"
+      "mcp__docs__get-library-docs",
+      "Bash(curl -s https://raw.githubusercontent.com/folke/snacks.nvim/main/docs/picker.md)",
+      "Bash(curl -s https://raw.githubusercontent.com/folke/snacks.nvim/main/README.md)"
     ],
     "deny": [],
     "ask": []

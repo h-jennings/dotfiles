@@ -90,12 +90,10 @@ return {
 
 					-- Symbols
 					map("n", "gs", function()
-						require("snacks").picker.lsp_symbols({ layout = { preset = "vscode", preview = "main" } })
+						require("snacks").picker.lsp_symbols()
 					end, "Buffer symbols")
 					map("n", "gS", function()
-						require("snacks").picker.lsp_workspace_symbols({
-							layout = { preset = "vscode", preview = "main" },
-						})
+						require("snacks").picker.lsp_workspace_symbols()
 					end, "Buffer symbols")
 
 					-- Call hierarchy
