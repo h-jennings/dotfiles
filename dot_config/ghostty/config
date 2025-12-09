@@ -10,7 +10,7 @@ cursor-style-blink=false
 
 
 window-padding-balance=true
-macos-titlebar-style=transparent
+macos-titlebar-style=hidden
 scrollback-limit = 1000000
 mouse-hide-while-typing=true
 

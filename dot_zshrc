@@ -105,10 +105,6 @@ export CLAUDE_CODE_USE_BEDROCK=1
 alias lg="lazygit"
 alias v="nvim"
 alias aicommit="git diff --staged | pbcopy; open raycast://ai-commands/git-commit-message"
-# alias termdark="sed -i -e 's/\*alabasterlight/\*alabasterdark/g' ~/.config/alacritty/alacritty.yml"
-# alias termlight="sed -i -e 's/\*alabasterdark/\*alabasterlight/g' ~/.config/alacritty/alacritty.yml"
-alias termdark="sed -i -e 's/kanso_pearl/kanso_ink/g' ~/.tmux.conf && sed -i -e 's/light/dark/g' ~/Library/Application\ Support/lazygit/config.yml"
-alias termlight="sed -i -e 's/kanso_ink/kanso_pearl/g' ~/.tmux.conf && sed -i -e 's/dark/light/g' ~/Library/Application\ Support/lazygit/config.yml"
 
 export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
