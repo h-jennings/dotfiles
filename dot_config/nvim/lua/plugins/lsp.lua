@@ -2,7 +2,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
+			"saghen/blink.cmp",
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 		},
@@ -57,8 +57,8 @@ return {
 				return orig_util_open_floating_preview(contents, syntax, opts, ...)
 			end
 
-			-- Get capabilities from nvim-cmp and set globally
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			-- Get capabilities from blink.cmp and set globally
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			vim.lsp.config("*", {
 				capabilities = capabilities,
 			})
@@ -186,6 +186,8 @@ return {
 						preferences = {
 							includePackageJsonAutoImports = "on",
 							importModuleSpecifier = "non-relative",
+							disableSuggestions = false,
+							autoImportFileExcludePatterns = { "node_modules/*", ".turbo/*" },
 						},
 						inlayHints = {
 							parameterNames = { enabled = "none" },
@@ -197,6 +199,17 @@ return {
 						},
 						tsserver = {
 							maxTsServerMemory = 8192,
+							skipLibCheck = true,
+							useSyntaxServer = "auto",
+							watchOptions = {
+								excludeDirectories = {
+									"**/node_modules",
+									"**/.turbo",
+									"**/.git",
+									"**/dist",
+									"**/build",
+								},
+							},
 						},
 					},
 					javascript = {
@@ -215,6 +228,7 @@ return {
 						},
 					},
 					vtsls = {
+						autoUseWorkspaceTsdk = true,
 						enableMoveToFileCodeAction = true,
 						experimental = {
 							maxInlayHintLength = 65,
@@ -237,38 +251,37 @@ return {
 		end,
 	},
 	{
-		"hrsh7th/nvim-cmp",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-path",
-			"js-everts/cmp-tailwind-colors",
+		"saghen/blink.cmp",
+		version = "v0.*",
+		opts = {
+			keymap = {
+				preset = "default",
+				["<C-p>"] = { "select_prev", "fallback" },
+				["<C-n>"] = { "select_next", "fallback" },
+				["<C-y>"] = { "select_and_accept" },
+				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+				["<Tab>"] = { "select_next", "fallback" },
+				["<S-Tab>"] = { "select_prev", "fallback" },
+				["<CR>"] = { "accept", "fallback" },
+			},
+			completion = {
+				menu = {
+					auto_show = true,
+				},
+				ghost_text = {
+					enabled = false,
+				},
+			},
+			sources = {
+				default = { "lsp" },
+				providers = {
+					lsp = {
+						opts = {
+							tailwind_color_icon = "██",
+						},
+					},
+				},
+			},
 		},
-		config = function()
-			local cmp = require("cmp")
-			local cmp_select = { behavior = cmp.SelectBehavior.Insert }
-			cmp.setup({
-				completion = {
-					autocomplete = false, -- Disable automatic completion popup
-				},
-				experimental = {
-					ghost_text = false, -- Disabled to avoid conflict with Copilot inline suggestions
-				},
-				sources = {
-					{ name = "nvim_lsp" },
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
-					["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
-					["<C-y>"] = cmp.mapping.confirm({ select = true }),
-					["<C-Space>"] = cmp.mapping.complete(), -- Manual trigger completion menu
-					["<Tab>"] = cmp.mapping.select_next_item({ behaviour = cmp.SelectBehavior.Insert }),
-					["<S-Tab>"] = cmp.mapping.select_prev_item({ behaviour = cmp.SelectBehavior.Insert }),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-				}),
-				formatting = {
-					format = require("cmp-tailwind-colors").format,
-				},
-			})
-		end,
 	},
 }
