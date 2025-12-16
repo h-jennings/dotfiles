@@ -154,31 +154,11 @@ return {
 					"tailwindcss",
 					"jsonls",
 					"typos_lsp",
-					"harper_ls",
 				},
 				automatic_installation = false,
 			})
 
 			-- Configure LSP servers
-			vim.lsp.config("harper_ls", {
-				settings = {
-					["harper-ls"] = {
-						linters = {
-							SpellCheck = false, -- typos handles all spell checking
-							SpelledNumbers = false,
-							AnA = true,
-							SentenceCapitalization = false,
-							UnclosedQuotes = true,
-							WrongQuotes = false,
-							LongSentences = true,
-							RepeatedWords = true,
-							Spaces = true,
-							Matcher = true,
-						},
-					},
-				},
-			})
-
 			vim.lsp.config("vtsls", {
 				settings = {
 					typescript = {
@@ -247,7 +227,6 @@ return {
 			vim.lsp.enable("tailwindcss")
 			vim.lsp.enable("jsonls")
 			vim.lsp.enable("typos_lsp")
-			vim.lsp.enable("harper_ls")
 		end,
 	},
 	{
