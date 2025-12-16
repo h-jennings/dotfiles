@@ -167,7 +167,7 @@ return {
 							includePackageJsonAutoImports = "on",
 							importModuleSpecifier = "non-relative",
 							disableSuggestions = false,
-							autoImportFileExcludePatterns = { "node_modules/*", ".turbo/*" },
+							autoImportFileExcludePatterns = { ".turbo/*" },
 						},
 						inlayHints = {
 							parameterNames = { enabled = "none" },
