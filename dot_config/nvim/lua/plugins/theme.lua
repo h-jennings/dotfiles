@@ -1,19 +1,5 @@
 return {
 	{
-		"zenbones-theme/zenbones.nvim",
-		lazy = false,
-		priority = 1000,
-		dependencies = { "rktjmp/lush.nvim" },
-		config = function()
-			vim.g.zenbones = {
-				transparent_background = false,
-				solid_line_nr = true,
-				italic_comments = false,
-				italic_strings = false,
-			}
-		end,
-	},
-	{
 		"webhooked/kanso.nvim",
 		lazy = false,
 		priority = 1000,
