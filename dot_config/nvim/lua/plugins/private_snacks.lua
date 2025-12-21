@@ -81,9 +81,6 @@ return {
 				},
 			},
 		},
-		gh = {
-			enabled = true,
-		},
 	},
 	-- FZF SEARCH SYNTAX (use during interactive search):
 	--   Inline filtering examples:

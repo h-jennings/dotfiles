@@ -1,50 +1,26 @@
 return {
 	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons",
-			"MunifTanjim/nui.nvim",
-			"antosha417/nvim-lsp-file-operations",
-		},
-		lazy = false,
+		"mikavilpas/yazi.nvim",
+		event = "VeryLazy",
 		keys = {
-			{ "<leader>e", "<cmd>Neotree reveal<cr>", desc = "Find file in filetree" },
-			{ "<C-n>", "<cmd>Neotree toggle<cr>", desc = "Toggle filetree" },
+			{ "<leader>e", "<cmd>Yazi<cr>", desc = "Open yazi at current file" },
+			{ "<C-n>", "<cmd>Yazi toggle<cr>", desc = "Toggle yazi" },
+			{ "<leader>cw", "<cmd>Yazi cwd<cr>", desc = "Open yazi at cwd" },
 		},
 		opts = {
-			close_if_last_window = true,
-			popup_border_style = "rounded",
-			enable_git_status = true,
-			enable_diagnostics = true,
-			filesystem = {
-				filtered_items = {
-					visible = false,
-					hide_dotfiles = true,
-					hide_gitignored = false,
-					hide_by_name = {
-						".git",
-						"node_modules",
-						".vscode",
-					},
-				},
-				follow_current_file = {
-					enabled = true,
-				},
-				use_libuv_file_watcher = true,
+			open_for_directories = true, -- replaces netrw
+			keymaps = {
+				show_help = "<f1>",
+				replace_in_directory = false,
 			},
-			window = {
-				position = "float",
-				width = 40,
+			integrations = {
+				grep_in_directory = function(directory)
+					require("snacks").picker.grep({ cwd = directory })
+				end,
 			},
 		},
-	},
-	{
-		"antosha417/nvim-lsp-file-operations",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		opts = {},
+		init = function()
+			vim.g.loaded_netrwPlugin = 1 -- disable netrw
+		end,
 	},
 }
