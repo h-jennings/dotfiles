@@ -1,0 +1,153 @@
+# AeroSpace Configuration
+# Minimal vim-style setup with 4 workspaces
+
+start-at-login = false
+
+# Normalizations
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Layout defaults
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Key mapping
+key-mapping.preset = 'qwerty'
+
+# Enable borders
+after-startup-command = [
+  'exec-and-forget borders active_color=0xff4d699b inactive_color=0xff6d6f6e width=5.0'
+]
+
+# Gaps
+[gaps]
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 10
+outer.bottom = 10
+outer.top = 10
+outer.right = 10
+
+[exec]
+inherit-env-vars = true
+[exec.env-vars]
+PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
+
+# Main mode bindings
+[mode.main.binding]
+
+# Vim-style focus navigation
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# Move windows within workspace
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+# Workspace switching
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+
+# Move window to workspace 
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+
+# Quick workspace toggle
+alt-tab = 'workspace-back-and-forth'
+
+# Layout toggles
+alt-slash = 'layout tiles horizontal vertical'
+alt-comma = 'layout accordion horizontal vertical'
+
+# Quick float toggle (main mode)
+alt-ctrl-f = 'layout floating tiling'
+
+# Fullscreen
+alt-f = 'fullscreen'
+
+# Resize (main mode)
+alt-shift-minus = 'resize smart -50'
+alt-shift-equal = 'resize smart +50'
+
+# Join windows (main mode with ctrl)
+alt-ctrl-h = 'join-with left'
+alt-ctrl-j = 'join-with down'
+alt-ctrl-k = 'join-with up'
+alt-ctrl-l = 'join-with right'
+
+# Mode entries
+alt-r = 'mode resize'
+alt-s = 'mode service'
+
+# Resize mode
+[mode.resize.binding]
+h = 'resize width -50'
+j = 'resize height +50'
+k = 'resize height -50'
+l = 'resize width +50'
+minus = 'resize smart -50'
+equal = 'resize smart +50'
+b = 'balance-sizes'
+enter = 'mode main'
+esc = 'mode main'
+
+# Service mode
+[mode.service.binding]
+r = ['reload-config', 'mode main']
+f = ['layout floating tiling', 'mode main']
+t = ['flatten-workspace-tree', 'mode main']
+backspace = ['close-all-windows-but-current', 'mode main']
+enter = 'mode main'
+esc = 'mode main'
+
+# Window detection rules - float system apps only
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systemsettings'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.FaceTime'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.1password.1password'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.bitwarden.desktop'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.toggl.daneel'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.raycast.macos'
+run = 'layout floating'
+
+# Dialog detection
+[[on-window-detected]]
+if.window-title-regex-substring = '(preferences|settings|about|dialog|alert|error|warning)'
+check-further-callbacks = true
+run = 'layout floating'
