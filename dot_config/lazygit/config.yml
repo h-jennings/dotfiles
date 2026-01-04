@@ -1,0 +1,16 @@
+os:
+  edit: "nvr -cc 'close' --remote {{filename}}"
+  editAtLine: "nvr -cc 'close' --remote +{{line}} {{filename}}"
+  editAtLineAndWait: "nvr -cc 'close' --remote-wait +{{line}} {{filename}}"
+  openDirInEditor: "nvr -cc 'close' --remote {{dir}}"
+customCommands:
+  - key: "F"
+    command: "git fetch origin -p"
+    context: "localBranches"
+gui:
+  sidePanelWidth: 0.2
+git:
+  paging:
+    colorArg: always
+    pager: ~/.config/lazygit/delta-auto.sh
+  autoForwardBranches: "none"
