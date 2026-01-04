@@ -1,0 +1,29 @@
+
+. "$HOME/.cargo/env"
+
+# XDG base directory
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Editor
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+# AWS
+export AWS_REGION=us-east-2
+export AWS_PROFILE=breakline-production
+export CLAUDE_CODE_USE_BEDROCK=1
+
+# PATH additions
+export PATH="/Users/hunterjennings/.local/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+export PATH="/Users/hunterjennings/.sst/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/hunterjennings/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
