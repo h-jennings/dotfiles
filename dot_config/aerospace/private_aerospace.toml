@@ -61,7 +61,7 @@ alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
 alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
 
 # Quick workspace toggle
-alt-tab = 'workspace-back-and-forth'
+# alt-tab = 'workspace-back-and-forth'
 
 # Layout toggles
 alt-slash = 'layout tiles horizontal vertical'
@@ -168,3 +168,7 @@ run = 'move-node-to-workspace 3'
 [[on-window-detected]]
 if.app-id = 'com.granola.app'
 run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.timpler.screenstudio'
+run = 'layout floating'
