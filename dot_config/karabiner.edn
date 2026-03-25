@@ -30,6 +30,7 @@
         :toggle-mode
         [:d {:key :d :modi [:left_command :left_option]}]
         [:n {:key :t :modi [:right_control :left_command :left_shift]}]
+        [:b ["/bin/bash -c 'pgrep -x borders && killall borders || /opt/homebrew/bin/borders active_color=0xff8250df inactive_color=0xff6d6f6e width=5.0'"]] ;; toggle borders
       ]
     }
     {
