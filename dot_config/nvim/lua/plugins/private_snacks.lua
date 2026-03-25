@@ -25,9 +25,9 @@ return {
 		input = {
 			enabled = true,
 		},
-		lazygit = {
-			enabled = true,
-		},
+		-- lazygit = {
+		-- 	enabled = true,
+		-- },
 		terminal = {
 			enabled = true,
 		},
@@ -189,13 +189,13 @@ return {
 			desc = "Grep word under cursor",
 			mode = { "n", "x" },
 		},
-		{
-			"<leader>gg",
-			function()
-				require("snacks").lazygit()
-			end,
-			desc = "Open lazygit",
-		},
+		-- {
+		-- 	"<leader>gg",
+		-- 	function()
+		-- 		require("snacks").lazygit()
+		-- 	end,
+		-- 	desc = "Open lazygit",
+		-- },
 		{
 			"<C-`>",
 			function()
