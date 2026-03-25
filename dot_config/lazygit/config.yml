@@ -1,8 +1,6 @@
 os:
-  edit: "nvr -cc 'close' --remote {{filename}}"
-  editAtLine: "nvr -cc 'close' --remote +{{line}} {{filename}}"
-  editAtLineAndWait: "nvr -cc 'close' --remote-wait +{{line}} {{filename}}"
-  openDirInEditor: "nvr -cc 'close' --remote {{dir}}"
+  editPreset: "vscode"
+promptToReturnFromSubprocess: false
 customCommands:
   - key: "F"
     command: "git fetch origin -p"
@@ -10,7 +8,7 @@ customCommands:
 gui:
   sidePanelWidth: 0.2
 git:
-  paging:
-    colorArg: always
-    pager: ~/.config/lazygit/delta-auto.sh
+  pagers:
+    - colorArg: always
+      pager: ~/.config/lazygit/delta-auto.sh
   autoForwardBranches: "none"
