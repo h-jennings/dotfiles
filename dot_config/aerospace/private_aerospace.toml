@@ -15,9 +15,9 @@ default-root-container-orientation = 'auto'
 key-mapping.preset = 'qwerty'
 
 # Enable borders
-after-startup-command = [
-  'exec-and-forget borders active_color=0xff8250df inactive_color=0xff6d6f6e width=5.0'
-]
+# after-startup-command = [
+#   'exec-and-forget borders active_color=0xff8250df inactive_color=0xff6d6f6e width=5.0'
+# ]
 
 # Gaps
 [gaps]

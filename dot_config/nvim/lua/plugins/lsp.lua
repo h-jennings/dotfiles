@@ -112,7 +112,7 @@ return {
 					map("n", "<leader>lr", "<cmd>LspRestart<cr>", "Restart LSP")
 
 					-- Enable inlay hints if supported
-					if client and client.supports_method("textDocument/inlayHint") then
+					if client and client:supports_method("textDocument/inlayHint") then
 						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 
 						map("n", "<leader>th", function()

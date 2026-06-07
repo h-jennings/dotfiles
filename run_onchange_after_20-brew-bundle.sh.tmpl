@@ -1,0 +1,20 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+set -eu
+
+# Re-runs whenever the Brewfile changes (hash below forces chezmoi to detect it).
+# Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
+
+# Make sure brew is on PATH (fresh shells on Apple Silicon need this).
+if [ -x /opt/homebrew/bin/brew ]; then
+	eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+	eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+echo "==> Installing packages from ~/.Brewfile..."
+# Don't abort the whole apply if a single entry fails (e.g. a vscode
+# extension when the editor isn't installed yet); report and continue.
+brew bundle --file="$HOME/.Brewfile" || \
+	echo "!! Some Brewfile entries failed to install. Review the output above."
+{{- end }}

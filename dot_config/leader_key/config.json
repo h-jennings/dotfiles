@@ -1,89 +1,93 @@
 {
-  "actions": [
+  "actions" : [
     {
-      "key": "b",
-      "type": "application",
-      "value": "/Applications/Google Chrome.app"
+      "key" : "b",
+      "type" : "application",
+      "value" : "/Applications/Google Chrome.app"
     },
     {
-      "key": "f",
-      "type": "application",
-      "value": "/Applications/Figma.app"
+      "key" : "f",
+      "type" : "application",
+      "value" : "/Applications/Figma.app"
     },
     {
-      "key": "l",
-      "type": "application",
-      "value": "/Applications/Linear.app"
+      "key" : "l",
+      "type" : "application",
+      "value" : "/Applications/Linear.app"
     },
     {
-      "key": "s",
-      "type": "application",
-      "value": "/Applications/Slack.app"
+      "key" : "s",
+      "type" : "application",
+      "value" : "/Applications/Slack.app"
     },
     {
-      "key": "m",
-      "type": "application",
-      "value": "/System/Applications/Messages.app"
+      "key" : "m",
+      "type" : "application",
+      "value" : "/System/Applications/Messages.app"
     },
     {
-      "key": "e",
-      "type": "application",
-      "value": "/System/Applications/Mail.app"
+      "key" : "e",
+      "type" : "application",
+      "value" : "/System/Applications/Mail.app"
     },
     {
-      "key": "p",
-      "type": "application",
-      "value": "/Applications/Polypane.app"
+      "key" : "p",
+      "type" : "application",
+      "value" : "/Applications/Polypane.app"
     },
     {
-      "key": "g",
-      "type": "application",
-      "value": "/Applications/Granola.app"
+      "key" : "g",
+      "type" : "application",
+      "value" : "/Applications/Granola.app"
     },
     {
-      "key": "S",
-      "type": "application",
-      "value": "/Applications/Spotify.app"
+      "key" : "S",
+      "type" : "application",
+      "value" : "/Applications/Spotify.app"
     },
     {
-      "key": "t",
-      "type": "application",
-      "value": "/Applications/Ghostty.app"
+      "key" : "t",
+      "type" : "application",
+      "value" : "/Applications/Ghostty.app"
     },
     {
-      "key": "a",
-      "type": "url",
-      "value": "raycast://extensions/raycast/raycast-ai/ai-chat"
+      "key" : "a",
+      "type" : "url",
+      "value" : "raycast://extensions/raycast/raycast-ai/ai-chat"
     },
     {
-      "key": "z",
-      "type": "application",
-      "value": "/Applications/Zed.app"
+      "key" : "z",
+      "type" : "application",
+      "value" : "/Applications/Zed.app"
     },
     {
-      "key": "r",
-      "type": "application",
-      "value": "/Applications/Roam Research.app"
+      "key" : "r",
+      "type" : "application",
+      "value" : "/Applications/Roam Research.app"
     },
     {
-      "actions": [
+      "actions" : [
         {
-          "key": "s",
-          "label": "Enter service mode",
-          "type": "command",
-          "value": "/opt/homebrew/bin/aerospace mode service"
+          "key" : "s",
+          "label" : "Enter service mode",
+          "type" : "command",
+          "value" : "/opt/homebrew/bin/aerospace mode service"
         },
         {
-          "key": "r",
-          "label": "Enter resize mode",
-          "type": "command",
-          "value": "/opt/homebrew/bin/aerospace mode resize"
+          "key" : "r",
+          "label" : "Enter resize mode",
+          "type" : "command",
+          "value" : "/opt/homebrew/bin/aerospace mode resize"
         }
       ],
-      "key": "w",
-      "type": "group"
+      "key" : "w",
+      "type" : "group"
+    },
+    {
+      "key" : "c",
+      "type" : "application",
+      "value" : "/Applications/Visual Studio Code.app"
     }
   ],
-  "type": "group"
+  "type" : "group"
 }
-
