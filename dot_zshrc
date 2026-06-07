@@ -24,4 +24,4 @@ eval "$(mise activate zsh)"
 eval "$(atuin init zsh)"
 
 # opencode
-export PATH=/Users/hunterjennings/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
