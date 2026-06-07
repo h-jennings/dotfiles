@@ -11,11 +11,6 @@
       "value" : "/Applications/Figma.app"
     },
     {
-      "key" : "l",
-      "type" : "application",
-      "value" : "/Applications/Linear.app"
-    },
-    {
       "key" : "s",
       "type" : "application",
       "value" : "/Applications/Slack.app"
@@ -29,16 +24,6 @@
       "key" : "e",
       "type" : "application",
       "value" : "/System/Applications/Mail.app"
-    },
-    {
-      "key" : "p",
-      "type" : "application",
-      "value" : "/Applications/Polypane.app"
-    },
-    {
-      "key" : "g",
-      "type" : "application",
-      "value" : "/Applications/Granola.app"
     },
     {
       "key" : "S",
@@ -59,11 +44,6 @@
       "key" : "z",
       "type" : "application",
       "value" : "/Applications/Zed.app"
-    },
-    {
-      "key" : "r",
-      "type" : "application",
-      "value" : "/Applications/Roam Research.app"
     },
     {
       "actions" : [
