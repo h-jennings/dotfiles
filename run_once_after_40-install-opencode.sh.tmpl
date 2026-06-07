@@ -1,0 +1,12 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+set -eu
+
+# Install opencode via its official installer (drops a binary in ~/.opencode/bin).
+if [ ! -x "$HOME/.opencode/bin/opencode" ]; then
+	echo "==> Installing opencode..."
+	curl -fsSL https://opencode.ai/install | bash
+else
+	echo "==> opencode already installed. Skipping."
+fi
+{{- end }}

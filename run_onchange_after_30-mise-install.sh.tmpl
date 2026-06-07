@@ -1,0 +1,21 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+set -eu
+
+# Re-runs whenever the global mise config changes (provisions new runtimes).
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+
+# Make sure brew-installed mise is on PATH.
+if [ -x /opt/homebrew/bin/brew ]; then
+	eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+	eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+if command -v mise >/dev/null 2>&1; then
+	echo "==> Provisioning runtimes with mise..."
+	mise install
+else
+	echo "!! mise not found on PATH; skipping runtime provisioning."
+fi
+{{- end }}

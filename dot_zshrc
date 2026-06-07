@@ -22,3 +22,6 @@ alias aicommit="git diff --staged | pbcopy; open raycast://ai-commands/git-commi
 eval "$(mise activate zsh)"
 . "$HOME/.atuin/bin/env"
 eval "$(atuin init zsh)"
+
+# opencode
+export PATH=/Users/hunterjennings/.opencode/bin:$PATH
