@@ -5,6 +5,11 @@ customCommands:
   - key: "F"
     command: "git fetch origin -p"
     context: "localBranches"
+  - key: "H"
+    command: "hunk show {{.SelectedLocalCommit.Hash}}"
+    context: "commits"
+    subprocess: true
+    description: "review commit with hunk"
 gui:
   sidePanelWidth: 0.2
 git:
