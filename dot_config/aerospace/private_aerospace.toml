@@ -1,7 +1,14 @@
 # AeroSpace Configuration
 # Minimal vim-style setup with 4 workspaces
 
-start-at-login = false
+start-at-login = true
+
+# Move the mouse to the center of the newly focused window so clicks/hovers
+# land where keyboard focus is
+on-focus-changed = ['move-mouse window-lazy-center']
+
+# Unhide macOS-hidden apps when focusing them (avoids confusing tiling state)
+automatically-unhide-macos-hidden-apps = true
 
 # Normalizations
 enable-normalization-flatten-containers = true
@@ -54,14 +61,14 @@ alt-2 = 'workspace 2'
 alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
 
-# Move window to workspace and follow
-alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
-alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+# Move window to workspace (stay on current workspace)
+alt-shift-1 = ['move-node-to-workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4']
 
 # Quick workspace toggle
-# alt-tab = 'workspace-back-and-forth'
+alt-tab = 'workspace-back-and-forth'
 
 # Layout toggles
 alt-slash = 'layout tiles horizontal vertical'
@@ -163,6 +170,10 @@ run = 'layout floating'
 # Workspace routing - Comms to workspace 3
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
 run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]

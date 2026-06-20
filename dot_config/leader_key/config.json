@@ -36,34 +36,6 @@
       "value" : "/Applications/Ghostty.app"
     },
     {
-      "key" : "a",
-      "type" : "url",
-      "value" : "raycast://extensions/raycast/raycast-ai/ai-chat"
-    },
-    {
-      "key" : "z",
-      "type" : "application",
-      "value" : "/Applications/Zed.app"
-    },
-    {
-      "actions" : [
-        {
-          "key" : "s",
-          "label" : "Enter service mode",
-          "type" : "command",
-          "value" : "/opt/homebrew/bin/aerospace mode service"
-        },
-        {
-          "key" : "r",
-          "label" : "Enter resize mode",
-          "type" : "command",
-          "value" : "/opt/homebrew/bin/aerospace mode resize"
-        }
-      ],
-      "key" : "w",
-      "type" : "group"
-    },
-    {
       "key" : "c",
       "type" : "application",
       "value" : "/Applications/Visual Studio Code.app"
