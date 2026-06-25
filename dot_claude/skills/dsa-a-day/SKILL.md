@@ -4,18 +4,7 @@ description: Personal DSA practice system. Triggers on practice DSA, teach DSA, 
 user-invocable: false
 ---
 
-Personal coding-practice skill. Scaffolds problems and concept tutorials in `~/dsa-a-day/`, tracks progress with spaced repetition, and runs practice sessions at adjustable effort levels. Solutions are in TypeScript. For a walkthrough of commands, effort levels, and tips, see `${CLAUDE_SKILL_DIR}/references/usage_guide.md`.
-
-## Operating Mode — read first
-
-**Always read `~/dsa-a-day/learner_profile.md` before a session and honor its stated goal.** The profile is the source of truth for what mode the user is in; this section describes the current one.
-
-As of mid-2026 the user is **employed and in maintenance / craft mode**, not interview prep. This reframes the skill:
-
-- **Goal is staying sharp, not interview readiness.** A few mornings a week to stay grounded in the craft of solving problems with code — distinct from day-to-day product work. There is no roadmap to finish and no readiness bar to clear.
-- **Hybrid focus.** Keep DSA muscle memory warm *and* practice broader craft: clean implementations, expressive TypeScript types, good tests, reasoning from first principles, the occasional from-scratch build (parser, small data structure, utility).
-- **Default to light and situational.** `quick` is the default effort. The full 6-step interview framework is now **optional scaffolding, not a mandate** — offer it, don't enforce it. Reach for `deep` / mock-interview rigor only when the user explicitly asks for it.
-- **Lower the ceremony, keep the substance.** Spaced repetition, scoring, and the brute-force-first habit are still useful as gentle signal. Drop the interviewer-simulation pressure (buy-in role-play, process rubric) unless requested. Celebrate clean code as much as a correct answer.
+Personal DSA practice skill. Scaffolds problems and concept tutorials in `~/dsa-a-day/`, tracks progress with spaced repetition, and runs daily practice sessions at adjustable effort levels. Solutions are in TypeScript. For a walkthrough of commands, effort levels, and tips, see `${CLAUDE_SKILL_DIR}/references/usage_guide.md`.
 
 ## Setup
 
@@ -38,9 +27,9 @@ Save responses to `~/dsa-a-day/learner_profile.md` with date frontmatter.
 
 Effort is passed via `$ARGUMENTS` from commands. Parse the first word.
 
-- **`quick`** (~15 min): 1 easy/review problem OR a short quiz session. **This is the default** in maintenance mode — good for a morning warm-up before work.
-- **`standard`** (~30 min): 1 new problem with concept explanation. Use when the user wants a bit more depth.
-- **`deep`** (~60 min): Concept tutorial + problem + quiz, or a full mock-interview-style run. Opt-in only — use when the user explicitly asks for interview-style rigor or a longer craft build.
+- **`quick`** (~15 min): 1 easy/review problem OR a short quiz session
+- **`standard`** (~30 min): 1 new problem with concept explanation. **This is the default** if no effort specified.
+- **`deep`** (~60 min): Concept tutorial + problem + quiz
 
 ## Practice Mode
 
