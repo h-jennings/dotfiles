@@ -14,7 +14,7 @@ vim.keymap.set("n", "<leader>R", function()
 	vim.ui.input({ prompt = "Command: " }, function(command)
 		local dir = vim.fn.expand("%:p:h")
 		if command then -- check for nil in case user cancels
-			vim.cmd(string.format("!cd %s && %s", dir, command))
+			vim.cmd(string.format("!cd %s && %s", vim.fn.fnameescape(dir), command))
 		end
 	end)
 end, opts)
@@ -22,7 +22,7 @@ vim.keymap.set("v", "<leader>R", function()
 	vim.ui.input({ prompt = "Command: " }, function(command)
 		local dir = vim.fn.expand("%:p:h")
 		if command then -- check for nil in case user cancels
-			vim.cmd(string.format("!cd %s && %s", dir, command))
+			vim.cmd(string.format("!cd %s && %s", vim.fn.fnameescape(dir), command))
 		end
 	end)
 end, opts)

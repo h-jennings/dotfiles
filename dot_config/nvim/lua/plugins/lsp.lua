@@ -94,7 +94,7 @@ return {
 					end, "Buffer symbols")
 					map("n", "gS", function()
 						require("snacks").picker.lsp_workspace_symbols()
-					end, "Buffer symbols")
+					end, "Workspace symbols")
 
 					-- Call hierarchy
 					map("n", "gic", function()

@@ -20,7 +20,14 @@ return {
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function(args)
 					local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
-					if lang and pcall(vim.treesitter.language.add, lang) then
+					if not lang then
+						return
+					end
+					-- `language.add` returns `true` only when the parser actually loads;
+					-- it returns `nil` (without erroring) when the parser isn't installed,
+					-- so we must check its return value, not just whether pcall succeeded.
+					local ok, added = pcall(vim.treesitter.language.add, lang)
+					if ok and added then
 						vim.treesitter.start(args.buf, lang)
 					end
 				end,
