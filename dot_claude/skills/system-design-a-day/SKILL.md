@@ -1,6 +1,7 @@
 ---
 name: system-design-a-day
 description: Personal front-end system design practice system. Triggers on practice system design, teach system design, quiz system design, sync system design, front-end system design, RADIO framework, front-end interview prep.
+user-invocable: false
 ---
 
 Personal front-end system design practice skill. Scaffolds design problems
