@@ -1,0 +1,38 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  // Make the Telescope-style Text Finder the default for content search.
+  // `cmd-shift-f` now opens the Text Finder (modal picker with preview)
+  // instead of the in-pane project search.
+  //
+  // Swap between the two with `cmd-alt-f` (both directions are Zed defaults):
+  //   - in the Text Finder:    cmd-alt-f -> text_finder::ToProjectSearch
+  //   - in the project search:  cmd-alt-f -> project_search::OpenTextFinder
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-shift-f": "text_finder::Toggle",
+    },
+  },
+  {
+    // Override the default `cmd-shift-f` -> pane::DeploySearch at the Pane
+    // level (same specificity, so the user binding wins). The deeper
+    // ProjectSearchBar binding (focus the search input while a search is
+    // already open) is intentionally left untouched.
+    "context": "Pane",
+    "bindings": {
+      "cmd-shift-f": "text_finder::Toggle",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+    },
+  },
+]
