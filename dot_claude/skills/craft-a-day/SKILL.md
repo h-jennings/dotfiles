@@ -1,6 +1,6 @@
 ---
 name: craft-a-day
-description: Personal programming-craft and fluency practice system — keeps everyday coding skills sharp through short daily reps. Triggers on craft a day, craft practice, craft session, refactor drill, build-from-scratch or breakable toy, TypeScript fluency, idiomatic JS/TS, type puzzle, testing-craft drill, debugging drill, async or concurrency practice, code kata, teach-craft, quiz-craft, sync-craft. Six tracks build, refactor, fluency, testing, debugging, async. NOT for interview prep — for algorithm/LeetCode practice use dsa-a-day instead, for architecture use system-design-a-day.
+description: Personal programming-craft and fluency practice system — keeps everyday coding skills sharp through short daily reps. Triggers on craft a day, craft practice, craft session, refactor drill, build-from-scratch or breakable toy, TypeScript fluency, idiomatic JS/TS, type puzzle, testing-craft drill, debugging drill, async or concurrency practice, code kata, teach-craft, review-craft, sync-craft. Six tracks build, refactor, fluency, testing, debugging, async. NOT for interview prep — for algorithm/LeetCode practice use dsa-a-day instead, for architecture use system-design-a-day.
 user-invocable: false
 ---
 
@@ -83,7 +83,7 @@ descriptions, when-to-reach-for-it, and seed exercise banks are in
 Triggered by craft intent (e.g., `/craft`, `/craft quick`, `/craft refactor`).
 
 1. Survey existing work: `python3 ${CLAUDE_SKILL_DIR}/scripts/index_content.py --type all --format human`
-2. Find review candidates: `python3 ${CLAUDE_SKILL_DIR}/scripts/quiz_priority.py --type all`
+2. Find review candidates: `python3 ${CLAUDE_SKILL_DIR}/scripts/review_priority.py --type all`
 3. **Decide new vs. review:**
    - If a review item is clearly due (priority > ~2.0) and the user is up for it,
      offer a re-solve. Otherwise do a new exercise.
@@ -126,8 +126,7 @@ Triggered by craft intent (e.g., `/craft`, `/craft quick`, `/craft refactor`).
     - **Reflect:** append one honest line to the `## Reflection` block and to
       `~/craft-a-day/learnings.md` (format: `- DD-MM-YYYY [track] takeaway (slug)`).
 
-**Review flow:** re-present a past exercise from memory, have the user re-solve,
-then discuss what's changed since last time. Update `confidence` and `last_quizzed`.
+**Re-solving a past exercise** is its own first-class mode — see **Review Mode** below.
 
 ## Teach Mode
 
@@ -144,31 +143,48 @@ Triggered by teach intent (e.g., `/craft teach`, `/craft teach discriminated-uni
 6. **Write `exercise.ts`** — a short practice exercise to cement it.
 7. Walk through it, answer questions, append any Q&A to the `## Q&A` section.
 
-## Quiz Mode
+## Review Mode
 
-Triggered by quiz intent (e.g., `/craft quiz`, `/craft quiz async`).
+Triggered by review intent (e.g., `/craft review`, `/craft review async`).
+Spaced repetition done **code-first**: instead of asking questions, resurface a
+past exercise and have the user re-solve it hands-on. Getting reps in, not a viva.
 
-1. Prioritize: `python3 ${CLAUDE_SKILL_DIR}/scripts/quiz_priority.py --type all`
-   (filter to a track if one was named).
-2. **Ask 1 question at a time.** Wait for each answer. Keep it light and curious.
-3. Mix question types: recall ("how does X work?"), code-reading ("what does this
-   return?"), judgment ("how would you improve this?" / "what would you test
-   here?"), decision ("which approach and why?").
-4. After 3–4 questions, for each item touched:
-   - Log a **confidence** self-check (1–5: shaky → fluent). This is a private
-     scheduling signal, **not a grade** — no pass/fail, no pressure.
-   - Update `confidence` and `last_quizzed` in the item's frontmatter.
-   - Append to its `## Quiz History`:
+1. Prioritize: `python3 ${CLAUDE_SKILL_DIR}/scripts/review_priority.py --type all`
+   (filter to a track if one was named). Pick the most-due item.
+2. **Reset it to a fresh rep — never show `solution.ts` until step 5.**
+   - **exercise** — re-serve the original prompt. Re-present `brief.md`, and make
+     the working file blank/stubbed again: the prompt files (`before.ts`,
+     `buggy.ts`, `subject.ts`, or the `starter.ts` stub / `drills.ts`) were
+     committed at scaffold time, so recover them with git if a past solution now
+     sits there — e.g. `git log --oneline -- <path>` then
+     `git checkout <scaffold-commit> -- <path>` (or just clear the file back to
+     the stub shown in the brief). Confirm tests are red/pending before they start.
+   - **concept** — turn it into a short code drill: re-serve the concept's
+     `exercise.ts` (or invent a fresh 5-minute micro-drill on the same idea).
+     Skip pure recall Q&A — make them *write* the thing.
+3. **Let them solve it live**, lightly running the craft loop. Offer hints only
+   when asked; normalize being rustier than last time — that's the signal working.
+4. **Verify:** `cd ~/craft-a-day && pnpm vitest run exercises/<slug>` (or
+   `pnpm typecheck` for type puzzles / drills).
+5. **After the rep**, for the item reviewed:
+   - Compare briefly against the reference solution — what came back fast, what
+     was rusty. Keep it a conversation, not a grade.
+   - Log a **confidence** self-check (1–5: shaky → fluent). A private scheduling
+     signal, **not a grade** — no pass/fail, no pressure.
+   - Update `confidence` and `last_reviewed` in the item's frontmatter.
+   - Append to its `## Review History`:
      ```
-     ### Quiz - DD-MM-YYYY
-     **Q:** [question]
-     **A:** [summary + what it revealed]
+     ### Review - DD-MM-YYYY
+     **Re-solved:** [what they rebuilt/fixed]
+     **Rusty on:** [what needed a second look — or "clean"]
      Confidence: X/5
      ```
+   - Append one line to `~/craft-a-day/learnings.md` if the rep surfaced anything
+     worth keeping (format: `- DD-MM-YYYY [track] takeaway (slug)`).
 
 ### Confidence scale (self-check, not a grade)
 - **1** — shaky; would need to look it up
-- **2** — vague; partial recall
+- **2** — vague; got there with hints
 - **3** — solid with minor gaps
 - **4** — comfortable; handles edge cases
 - **5** — fluent; could teach it

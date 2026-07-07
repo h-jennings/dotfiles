@@ -7,9 +7,9 @@ interval ladder keyed on the 1-5 `confidence` self-check (not a grade) — craft
 fluency doesn't need aggressive re-drilling, just an occasional nudge.
 
 Usage:
-    python quiz_priority.py --type exercises
-    python quiz_priority.py --type concepts
-    python quiz_priority.py --type all
+    python review_priority.py --type exercises
+    python review_priority.py --type concepts
+    python review_priority.py --type all
 """
 
 import argparse
@@ -52,9 +52,9 @@ def calculate_priority(item, today):
     """
     Calculate review priority. Higher = more urgent.
 
-    - Never quizzed: days_since_created / ideal_interval + 10 (freshness bonus)
+    - Never reviewed: days_since_created / ideal_interval + 10 (freshness bonus)
     - status=attempted gets +5 bonus (started but not landed, needs reinforcement)
-    - Already quizzed: days_overdue / ideal_interval
+    - Already reviewed: days_overdue / ideal_interval
     - No date info at all: max urgency (100)
     """
     conf = item.get("confidence")
@@ -64,17 +64,17 @@ def calculate_priority(item, today):
 
     bonus = 5 if item.get("status") == "attempted" else 0
 
-    last_quizzed = parse_date(item.get("last_quizzed"))
+    last_reviewed = parse_date(item.get("last_reviewed"))
 
-    if not last_quizzed:
+    if not last_reviewed:
         created = parse_date(item.get("created"))
         if created:
             days_since_created = (today - created).days
             return days_since_created / ideal_interval + 10 + bonus
         return 100  # no dates at all -> surface it
 
-    days_since_quiz = (today - last_quizzed).days
-    days_overdue = days_since_quiz - ideal_interval
+    days_since_review = (today - last_reviewed).days
+    days_overdue = days_since_review - ideal_interval
     return days_overdue / ideal_interval + bonus
 
 
@@ -131,7 +131,7 @@ def main():
             print(f"   tags: {tags}")
         conf = item.get("confidence")
         print(f"   confidence: {f'{conf}/5' if conf is not None else 'not self-checked'}")
-        print(f"   last quizzed: {days_ago_label(item.get('last_quizzed'), today)}")
+        print(f"   last reviewed: {days_ago_label(item.get('last_reviewed'), today)}")
         print(f"   priority: {item['priority']:.1f}")
         print(f"   file: {item.get('filepath')}")
         print()

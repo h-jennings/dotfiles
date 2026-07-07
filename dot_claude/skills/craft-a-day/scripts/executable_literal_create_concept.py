@@ -54,7 +54,7 @@ title: {title}
 concepts: {concepts_yaml}
 related_exercises: []
 confidence: null
-last_quizzed: null
+last_reviewed: null
 prerequisites: []
 created: {date_str}
 last_updated: {date_str}
@@ -88,9 +88,9 @@ last_updated: {date_str}
 
 [Questions and answers recorded during learning.]
 
-## Quiz History
+## Review History
 
-[Spaced-recall sessions recorded here.]
+[Spaced-repetition re-solves recorded here.]
 """
 
     examples_ts = f"""/**

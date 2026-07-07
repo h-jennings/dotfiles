@@ -60,7 +60,7 @@ topics: {topics_yaml}
 status: unsolved
 confidence: null
 last_practiced: null
-last_quizzed: null
+last_reviewed: null
 created: {date_str}
 last_updated: {date_str}
 ---
@@ -90,9 +90,9 @@ build / fix / drill, and why it's worth the reps.]
 
 [Questions and answers recorded during the session.]
 
-## Quiz History
+## Review History
 
-[Spaced-recall sessions recorded here.]
+[Spaced-repetition re-solves recorded here.]
 """
 
 

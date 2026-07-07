@@ -16,7 +16,7 @@ One command, `/craft`; the first word picks the mode (default: practice).
 | `/craft deep` | Practice (deep) | ~60 min | A meatier breakable toy or build, optionally with a concept first |
 | `/craft <track>` | Practice | varies | Pin the track: `build` · `refactor` · `fluency` · `testing` · `debugging` · `async` |
 | `/craft teach [topic]` | Teach | ~30 min | A concept tutorial with runnable examples + exercise |
-| `/craft quiz [track]` | Quiz | ~10 min | Light spaced-recall over past exercises and concepts |
+| `/craft review [track]` | Review | ~15 min | Code-first spaced repetition — re-solve a past exercise hands-on |
 | `/craft sync` | Sync | ~1 min | Git commit + push progress |
 
 `/craft` sits alongside `/dsa` and `/sysd` (same first-word-is-the-mode shape) —
@@ -58,16 +58,16 @@ Lighter than an interview framework — the point is fluency, not ceremony:
 Loose on purpose — this is upkeep, not a program:
 
 - **4–5x** `craft` / `craft quick` — rotate tracks for variety
-- **1x** `quiz-craft` — let spaced repetition resurface something
-- **occasionally** `teach-craft` — when a concept deserves a real write-up
-- `sync-craft` after each session
+- **1x** `craft review` — let spaced repetition resurface something to re-solve
+- **occasionally** `craft teach` — when a concept deserves a real write-up
+- `craft sync` after each session
 
 ## How tracking works
 
-- **Confidence, not grades.** After a quiz you log a 1–5 *confidence* self-check
+- **Confidence, not grades.** After a review you log a 1–5 *confidence* self-check
   (1 shaky → 5 fluent). It's a private signal for scheduling reviews, not a score
   to chase. No interview rubric, no pass/fail.
-- **Gentle spaced repetition.** `quiz_priority.py` schedules reviews on a
+- **Gentle spaced repetition.** `review_priority.py` schedules reviews on a
   maintenance-paced ladder (roughly 2 / 5 / 14 / 30 / 60 days as confidence
   rises) — an occasional nudge, not a drill sergeant.
 - **The logbook compounds.** `learnings.md` accumulates one line per session.

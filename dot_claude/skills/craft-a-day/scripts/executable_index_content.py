@@ -154,8 +154,8 @@ def format_human_readable(items, content_type):
 
         if item.get("last_practiced"):
             output.append(f"    Last practiced: {item['last_practiced']}")
-        if item.get("last_quizzed"):
-            output.append(f"    Last quizzed: {item['last_quizzed']}")
+        if item.get("last_reviewed"):
+            output.append(f"    Last reviewed: {item['last_reviewed']}")
         if item.get("has_solution"):
             output.append(f"    Has solution: yes")
 
