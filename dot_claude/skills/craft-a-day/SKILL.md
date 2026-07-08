@@ -151,36 +151,58 @@ past exercise and have the user re-solve it hands-on. Getting reps in, not a viv
 
 1. Prioritize: `python3 ${CLAUDE_SKILL_DIR}/scripts/review_priority.py --type all`
    (filter to a track if one was named). Pick the most-due item.
-2. **Reset it to a fresh rep — never show `solution.ts` until step 5.**
-   - **exercise** — re-serve the original prompt. Re-present `brief.md`, and make
-     the working file blank/stubbed again: the prompt files (`before.ts`,
-     `buggy.ts`, `subject.ts`, or the `starter.ts` stub / `drills.ts`) were
-     committed at scaffold time, so recover them with git if a past solution now
-     sits there — e.g. `git log --oneline -- <path>` then
-     `git checkout <scaffold-commit> -- <path>` (or just clear the file back to
-     the stub shown in the brief). Confirm tests are red/pending before they start.
-   - **concept** — turn it into a short code drill: re-serve the concept's
-     `exercise.ts` (or invent a fresh 5-minute micro-drill on the same idea).
+2. **Set up a fresh rep in a dated subfolder — never open `solution.ts` until step 5.**
+   The original files stay **pristine** (never re-solve in place, never `git checkout`
+   them back to a stub). Instead, create `<item>/reviews/<YYYY-MM-DD>/` (ISO date, so
+   folders sort chronologically) and **author the starting state fresh** into it.
+   Two equally valid options — reviewer's choice:
+   - *Reproduce* the original stub (reconstruct it from `brief.md` / `concept.md`) —
+     same code is fine; the point is a blank rep, not novelty.
+   - *Author a new variant* drilling the **same concept/patterns** with different code
+     (fresh inputs, a new bug of the same class, a differently-shaped puzzle). Keeps
+     reps from going rote while still exercising the target skill.
+
+   Keep the **original filename** inside the subfolder so instructions and verify
+   commands stay familiar:
+   - **refactor** — fresh smelly `before.ts` + matching `before.test.ts` (imports
+     `./before`), green against the smelly code.
+   - **debugging** — fresh `buggy.ts` with one planted bug + matching `buggy.test.ts`
+     (imports `./buggy`), red until fixed.
+   - **build / async** — fresh `starter.ts` stub + matching `starter.test.ts`
+     (imports `./starter`), pending/red.
+   - **testing** — fresh correct `subject.ts` + empty `subject.test.ts` for them to fill.
+   - **fluency** — fresh `drills.ts` (blanked puzzle); no test file — `pnpm typecheck`.
+   - **concept** — fresh `exercise.ts` (blanked, or a new micro-drill on the same idea).
      Skip pure recall Q&A — make them *write* the thing.
-3. **Let them solve it live**, lightly running the craft loop. Offer hints only
-   when asked; normalize being rustier than last time — that's the signal working.
-4. **Verify:** `cd ~/craft-a-day && pnpm vitest run exercises/<slug>` (or
-   `pnpm typecheck` for type puzzles / drills).
+
+   Every fresh `.ts` needs a top-level `import`/`export` (use `export {}` when there's
+   nothing else to export) — `isolatedModules` + `moduleDetection: force` require it.
+   Re-present `brief.md` / the concept, and confirm the rep starts red/pending.
+3. **Let them solve it live** in the subfolder, lightly running the craft loop. Offer
+   hints only when asked; normalize being rustier than last time — that's the signal working.
+4. **Verify** against the subfolder:
+   `cd ~/craft-a-day && pnpm vitest run <item>/reviews/<date>` (or `pnpm typecheck` for
+   type puzzles / drills, whose files are already covered by the tsconfig globs; or
+   `pnpm tsx <item>/reviews/<date>/exercise.ts` for inline PASS/FAIL harness concepts).
 5. **After the rep**, for the item reviewed:
    - Compare briefly against the reference solution — what came back fast, what
      was rusty. Keep it a conversation, not a grade.
    - Log a **confidence** self-check (1–5: shaky → fluent). A private scheduling
      signal, **not a grade** — no pass/fail, no pressure.
-   - Update `confidence` and `last_reviewed` in the item's frontmatter.
-   - Append to its `## Review History`:
+   - Update `confidence` and `last_reviewed` in the **original** item's frontmatter
+     (`brief.md` / `concept.md`) — this is what `review_priority.py` schedules from.
+   - Append to the **original** item's `## Review History` (not the subfolder):
      ```
      ### Review - DD-MM-YYYY
-     **Re-solved:** [what they rebuilt/fixed]
+     **Re-solved:** [what they rebuilt/fixed — note the reviews/<date>/ folder]
      **Rusty on:** [what needed a second look — or "clean"]
      Confidence: X/5
      ```
    - Append one line to `~/craft-a-day/learnings.md` if the rep surfaced anything
      worth keeping (format: `- DD-MM-YYYY [track] takeaway (slug)`).
+6. **Commit the rep** so the fresh folder + metadata land together. Only commit once
+   the rep is green / typecheck-clean (don't commit a still-red review):
+   `cd ~/craft-a-day && git add -A && git commit -m "Craft review DD-MM-YYYY: re-solve <topic> (confidence N/5)"`
 
 ### Confidence scale (self-check, not a grade)
 - **1** — shaky; would need to look it up
