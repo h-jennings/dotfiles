@@ -1,0 +1,99 @@
+# herdr configuration — ported from ~/.tmux.conf on 2026-07-24
+# Reference: https://herdr.dev/docs/configuration/
+# Reload after edits:  prefix+r   (or `herdr server reload-config`)
+# Revert keys to defaults:  herdr config reset-keys
+#
+# Concept mapping from tmux:
+#   tmux session  -> herdr workspace
+#   tmux window   -> herdr tab
+#   tmux pane     -> herdr pane
+
+[theme]
+# Follow macOS light/dark appearance.
+# Dark: "terminal" inherits your exact Ghostty nushu-dark palette.
+# Light: catppuccin-latte, because nushu-light maps its bright/white ANSI slots
+# to grays (e.g. #8d949e on a #f7f6f1 background) that render washed-out and
+# hard to read in herdr's UI. catppuccin-latte's warm cream is close in feel.
+auto_switch = true
+dark_name = "terminal"
+light_name = "catppuccin-latte"
+
+[terminal]
+# tmux `new-window -c "#{pane_current_path}"`: new panes/tabs/workspaces
+# inherit the current pane's working directory.
+new_cwd = "follow"
+
+[ui]
+# tmux `set -g mouse on`
+mouse_capture = true
+# tmux-yank copy-on-select behavior
+copy_on_select = true
+# Sort the agent sidebar as an attention queue: blocked/done agents bubble to
+# the top, so the most urgent agent is always at the top of the list.
+agent_panel_sort = "priority"
+
+# Show an in-app toast when a backgrounded agent changes state (done / needs
+# attention) so you notice there's a prefix+o target waiting.
+[ui.toast]
+delivery = "herdr"
+
+# Chime on agent state changes in background workspaces.
+[ui.sound]
+enabled = true
+
+[keys]
+# tmux: `unbind C-b` / `set -g prefix C-a`
+prefix = "ctrl+a"
+
+# tmux `bind r source-file ~/.tmux.conf` — kept on prefix+r for muscle memory.
+# herdr's default is prefix+shift+r for reload and prefix+r for resize, so we
+# swap the two below.
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+
+# tmux `bind n` / `bind p` (next/prev window). The prefix bindings already match
+# herdr defaults; the arrow alternates port your `bind -n S-Right` / `S-Left`.
+next_tab = ["prefix+n", "shift+right"]
+previous_tab = ["prefix+p", "shift+left"]
+
+# tmux `bind c new-window` (cwd handled by [terminal].new_cwd above).
+new_tab = "prefix+c"
+# tmux default `prefix+,` renames the window -> rename the tab here.
+rename_tab = ["prefix+shift+t", "prefix+comma"]
+
+# --- Sessions -> workspaces ---
+# tmux `bind C-s choose-session`
+workspace_picker = ["prefix+w", "prefix+ctrl+s"]
+# tmux `bind S new-session`
+new_workspace = ["prefix+shift+n", "prefix+shift+s"]
+# tmux default `prefix+$` renames the session -> rename the workspace here.
+rename_workspace = ["prefix+shift+w", "prefix+$"]
+
+# --- Pane focus (vim-style, from tmux-pain-control) ---
+# These already match herdr defaults, listed here for clarity:
+#   focus_pane_left  = "prefix+h"
+#   focus_pane_down  = "prefix+j"
+#   focus_pane_up    = "prefix+k"
+#   focus_pane_right = "prefix+l"
+# --- Splits (tmux-pain-control habit) ---
+# `-` (stacked) already maps to the default split_horizontal = prefix+minus.
+# Add `|` (side-by-side) as an alternate to split_vertical, alongside prefix+v.
+split_vertical = ["prefix+v", "prefix+|"]
+
+# ----------------------------------------------------------------------------
+# NOT PORTED (no direct herdr equivalent):
+#   * copy-mode-vi keytable (v / y / V / rectangle / A / D) — herdr selection is
+#     not a rebindable vi table; see copy_on_select above + `edit_scrollback`.
+#   * select-layout even-vertical/horizontal (bind v / bind b) — herdr has no
+#     "apply layout" action; use splits instead. (prefix+b = toggle_sidebar.)
+#   * Alt+arrow pane resize — use modal resize_mode (prefix+shift+r) instead.
+#   * paste-buffer / choose-buffer (C-p / P) — no paste-buffer stack.
+#   * lazygit binding (bind g / G) — intentionally skipped. Add later with a
+#     [[keys.command]] popup block if you want it back.
+#
+# BUILT-IN, so plugins are no longer needed:
+#   tmux-resurrect / tmux-continuum -> persistent sessions + [session]
+#                                      resume_agents_on_restore = true
+#   tmux-yank                       -> copy_on_select (above)
+#   tmux-sensible / -pain-control   -> herdr's default keymap
+# ----------------------------------------------------------------------------
