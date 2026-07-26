@@ -132,6 +132,18 @@ return {
 			},
 		},
 	},
+	-- ─── SEARCHING: THE THREE KEYS THAT MATTER ───────────────────────────
+	--   g/          Grep the project. This is the one.
+	--   <leader>ff  Find a file by name.
+	--   <leader>*   Grep what's under the cursor (or the selection, in visual).
+	--
+	--   Forgot something? <leader>fk fuzzy-searches every keymap you have,
+	--   and which-key shows the menu if you just pause after <leader>.
+	--
+	--   Everything below is a variant. The `<leader>g{d,p,b}` maps are only
+	--   shortcuts for what the inline syntax already does from inside `g/`.
+	-- ─────────────────────────────────────────────────────────────────────
+	--
 	-- FZF SEARCH SYNTAX (use during interactive search):
 	--   Inline filtering examples:
 	--     file:lua$ searchterm    - Filter by filename ending in 'lua', then search
