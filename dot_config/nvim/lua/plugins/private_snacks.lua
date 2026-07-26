@@ -40,9 +40,32 @@ return {
 		input = {
 			enabled = true,
 		},
-		-- lazygit = {
-		-- 	enabled = true,
-		-- },
+		lazygit = {
+			enabled = true,
+			-- `configure = true` (the default) is doing real work here: it
+			-- generates a theme file from the current colorscheme and points
+			-- lazygit at BOTH files via LG_CONFIG_FILE, so ~/.config/lazygit/
+			-- config.yml still wins on everything it sets (delta pager, custom
+			-- commands, sidePanelWidth). The generated file only adds colors,
+			-- nerd font version, and `os.editPreset = "nvim-remote"` — which is
+			-- the point: `e` on a file opens it in THIS Neovim, not a nested one.
+			win = { style = "lazygit" },
+		},
+		styles = {
+			lazygit = {
+				-- snacks' terminal style binds a double-tap `<esc>` (within
+				-- 200ms) to `stopinsert`. In lazygit `<esc>` is the back-out
+				-- key and gets pressed fast and repeatedly, so this ejected you
+				-- into normal mode mid-navigation. `false` disables the
+				-- inherited mapping; `q` still hides the window.
+				keys = { term_normal = false },
+				-- 0.9 with a dimmed backdrop is right for a transient float.
+				-- This isn't transient — it's where the work happens.
+				width = 0.95,
+				height = 0.95,
+				backdrop = false,
+			},
+		},
 		terminal = {
 			enabled = true,
 		},
@@ -285,13 +308,30 @@ return {
 			end,
 			desc = "Resume last picker",
 		},
-		-- {
-		-- 	"<leader>gg",
-		-- 	function()
-		-- 		require("snacks").lazygit()
-		-- 	end,
-		-- 	desc = "Open lazygit",
-		-- },
+		{
+			"<leader>gg",
+			function()
+				require("snacks").lazygit()
+			end,
+			desc = "Lazygit",
+		},
+		-- The two things lazygit structurally cannot do: it has no idea where
+		-- your cursor is. Everything else about browsing history is better in
+		-- lazygit, so nothing else from `picker.git_*` is bound here.
+		{
+			"<leader>gf",
+			function()
+				require("snacks").picker.git_log_file()
+			end,
+			desc = "History of this file",
+		},
+		{
+			"<leader>gc",
+			function()
+				require("snacks").picker.git_log_line()
+			end,
+			desc = "History of this line",
+		},
 		-- Close the buffer, not the window. `:q` closes a window and exits
 		-- Neovim once it's the last one; `:bd` keeps Neovim alive but tears
 		-- down the layout when the buffer is in a split. `bufdelete` does

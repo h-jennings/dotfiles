@@ -1,5 +1,15 @@
 os:
-  editPreset: "vscode"
+  # `e` on a file, and clicking a `lazygit-edit://` hyperlink from the delta
+  # pager below, both route through this. It said "vscode" while core.editor
+  # said nvim, so every edit from lazygit bounced you into a different editor.
+  #
+  # Deliberately "nvim" and not "nvim-remote": that preset needs $NVIM set and
+  # would fail outright when lazygit is launched from a bare shell. When it's
+  # launched from *inside* Neovim, snacks.nvim layers its own generated config
+  # on top (LG_CONFIG_FILE=this,<cache>/lazygit-theme.yml) and upgrades this to
+  # nvim-remote, so files open in the Neovim you already have rather than a
+  # nested one. Both paths land in nvim; only the mechanism differs.
+  editPreset: "nvim"
 promptToReturnFromSubprocess: false
 customCommands:
   - key: "F"
@@ -8,8 +18,8 @@ customCommands:
   - key: "H"
     command: "hunk show {{.SelectedLocalCommit.Hash}}"
     context: "commits"
-    subprocess: true
     description: "review commit with hunk"
+    output: terminal
 gui:
   sidePanelWidth: 0.2
 git:

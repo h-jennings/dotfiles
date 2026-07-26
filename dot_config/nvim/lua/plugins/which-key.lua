@@ -23,6 +23,12 @@ return {
 			-- both rather than pretending otherwise.
 			{ "<leader>g", group = "grep / git" },
 			{ "<leader>gh", group = "github" },
+			-- Shared, and it wasn't labelled at all: Arrow owns the global
+			-- `<leader>h{h,j,k,l,m,n,o,e}` bookmark maps, gitsigns adds
+			-- buffer-local `<leader>h{s,r,S,R,p,b,B,d,D,q,Q}` on top inside a
+			-- repo. The letters don't overlap, so nothing is shadowed — but
+			-- the menu is the only thing that makes that legible.
+			{ "<leader>h", group = "hunks / bookmarks" },
 			{ "<leader>f", group = "find" },
 			{ "<leader>x", group = "trouble / lists" },
 			{ "<leader>b", group = "buffer" },
