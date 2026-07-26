@@ -5,6 +5,13 @@ vim.keymap.set("n", "<leader>tw", function()
 	vim.opt.wrap = not vim.opt.wrap:get()
 end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 
+-- Toggle diagnostic virtual lines. Handy when the message below the cursor
+-- gets in the way while editing dense code.
+vim.keymap.set("n", "<leader>tv", function()
+	local shown = vim.diagnostic.config().virtual_lines
+	vim.diagnostic.config({ virtual_lines = not shown and { current_line = true } or false })
+end, { noremap = true, silent = true, desc = "Toggle diagnostic virtual lines" })
+
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
 vim.keymap.set("n", "<C-j>", ":cnext<CR>", opts)

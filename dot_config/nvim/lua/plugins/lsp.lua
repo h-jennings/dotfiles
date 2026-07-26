@@ -22,7 +22,15 @@ return {
 			-- Configure diagnostics
 			vim.diagnostic.config({
 				underline = true,
+				-- Inline text on every diagnostic line is noise, and it fights
+				-- `wrap`. `virtual_lines` renders the full message below the
+				-- cursor's line only, so messages stay readable without
+				-- permanently cluttering the buffer. Toggle with `<leader>tv`.
 				virtual_text = false,
+				virtual_lines = { current_line = true },
+				-- Errors win the gutter sign and sort first in floats/lists
+				-- when a line carries more than one severity.
+				severity_sort = true,
 				signs = {
 					text = {
 						[vim.diagnostic.severity.ERROR] = "󰅚",
@@ -37,8 +45,11 @@ return {
 				},
 				float = {
 					border = border_style,
-					source = "always",
-					focusable = false,
+					source = true,
+					-- Focusable so a second `gl` enters the float and it can be
+					-- scrolled: TypeScript type errors routinely run past
+					-- `max_height` and were otherwise unreadable past line 20.
+					focusable = true,
 					style = "minimal",
 					max_width = 80,
 					max_height = 20,
@@ -96,11 +107,13 @@ return {
 						require("snacks").picker.lsp_workspace_symbols()
 					end, "Workspace symbols")
 
-					-- Call hierarchy
-					map("n", "gic", function()
+					-- Call hierarchy. Moved off `gic`/`goc` because `gic` made
+					-- the much more frequent `gi` a prefix, stalling it for
+					-- `timeoutlen` on every use.
+					map("n", "<leader>ci", function()
 						require("snacks").picker.lsp_incoming_calls()
 					end, "Incoming calls")
-					map("n", "goc", function()
+					map("n", "<leader>co", function()
 						require("snacks").picker.lsp_outgoing_calls()
 					end, "Outgoing calls")
 

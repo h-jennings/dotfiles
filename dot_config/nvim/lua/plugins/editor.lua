@@ -41,8 +41,13 @@ return {
 				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
 				desc = "Buffer Diagnostics (Trouble)",
 			},
+			-- Deliberately not `gr`: Neovim 0.11 ships `grr`/`gra`/`grn`/`gri`/
+			-- `grt`/`grx` as defaults, and a bare `gr` mapping is a strict
+			-- prefix of all six — every one of them would stall for
+			-- `timeoutlen` first. Kept in the existing `<leader>x` Trouble
+			-- namespace instead.
 			{
-				"gr",
+				"<leader>xr",
 				"<cmd>Trouble lsp toggle focus=true win.position=right<cr>",
 				desc = "LSP Definitions / references / ... (Trouble)",
 			},
