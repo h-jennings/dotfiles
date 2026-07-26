@@ -140,8 +140,10 @@ return {
 	--   Forgot something? <leader>fk fuzzy-searches every keymap you have,
 	--   and which-key shows the menu if you just pause after <leader>.
 	--
-	--   Everything below is a variant. The `<leader>g{d,p,b}` maps are only
+	--   Everything below is a variant. The `<leader>g{p,b}` maps are only
 	--   shortcuts for what the inline syntax already does from inside `g/`.
+	--   To grep a directory you have to pick, use `<leader>e` (yazi) to
+	--   navigate there and hit `<c-s>` — no path typing.
 	-- ─────────────────────────────────────────────────────────────────────
 	--
 	-- FZF SEARCH SYNTAX (use during interactive search):
@@ -219,17 +221,6 @@ return {
 				require("snacks").picker.grep()
 			end,
 			desc = "Multi grep (pattern  glob)",
-		},
-		{
-			"<leader>gd",
-			function()
-				vim.ui.input({ prompt = "Directory: ", default = vim.fn.getcwd(), completion = "dir" }, function(dir)
-					if dir and dir ~= "" then
-						require("snacks").picker.grep({ cwd = vim.fn.expand(dir) })
-					end
-				end)
-			end,
-			desc = "Grep in directory",
 		},
 		{
 			"<leader>gp",
