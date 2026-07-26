@@ -37,20 +37,30 @@ return {
 				filename_bonus = true,
 				cwd_bonus = true,
 			},
-			layout = {
-				cycle = false,
-				layout = {
-					backdrop = false,
-					width = 0.6,
-					height = 0.9,
-					box = "vertical",
-					border = "rounded",
-					title = "{title} {live} {flags}",
-					title_pos = "center",
-					{ win = "preview", title = "{preview}", height = 0.6, border = "bottom" },
-					{ win = "input", height = 1, border = "bottom" },
-					{ win = "list", border = "none" },
+			-- Registered as a named preset rather than inlined into `layout`
+			-- below: a global layout with positional window entries suppresses
+			-- preset resolution for every source, so sources that ship their own
+			-- preset (e.g. `select`, used by `vim.ui.select`) would inherit this
+			-- one instead.
+			layouts = {
+				preview_top = {
+					layout = {
+						backdrop = false,
+						width = 0.6,
+						height = 0.9,
+						box = "vertical",
+						border = "rounded",
+						title = "{title} {live} {flags}",
+						title_pos = "center",
+						{ win = "preview", title = "{preview}", height = 0.6, border = "bottom" },
+						{ win = "input", height = 1, border = "bottom" },
+						{ win = "list", border = "none" },
+					},
 				},
+			},
+			layout = {
+				preset = "preview_top",
+				cycle = false,
 			},
 			sources = {
 				files = {
