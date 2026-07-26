@@ -42,6 +42,48 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- Fall back to the dashboard when the last real file is closed, instead of
+-- being left on an empty [No Name] buffer. Snacks only opens the dashboard
+-- at startup and exposes no option for this, so it's wired up by hand.
+vim.api.nvim_create_autocmd("BufDelete", {
+	desc = "Show dashboard when the last file buffer is closed",
+	group = vim.api.nvim_create_augroup("dashboard-on-empty", { clear = true }),
+	callback = function()
+		-- BufDelete fires *before* the buffer is unlisted, so defer the check.
+		-- Deliberately not comparing against the event's buffer number: those
+		-- get recycled, and by the time this runs the deleted buffer is already
+		-- unlisted, so the `buflisted` test below excludes it anyway.
+		vim.schedule(function()
+			-- Don't fight Neovim on the way out: quitting deletes every buffer.
+			if vim.v.exiting ~= vim.NIL then
+				return
+			end
+
+			for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+				if
+					vim.bo[buf].buflisted
+					and vim.bo[buf].buftype == ""
+					and vim.api.nvim_buf_get_name(buf) ~= ""
+				then
+					return
+				end
+			end
+
+			-- Only take over an ordinary window. Floating pickers and the file
+			-- tree can be focused when a background buffer is deleted, and
+			-- replacing those with the dashboard would be hostile.
+			local win = vim.api.nvim_get_current_win()
+			if vim.api.nvim_win_get_config(win).relative ~= "" or vim.bo.buftype ~= "" then
+				return
+			end
+
+			-- `win`/`buf` of 0 reuse the current ones, so the dashboard renders
+			-- in place rather than opening a float over the top.
+			require("snacks").dashboard({ win = 0, buf = 0 })
+		end)
+	end,
+})
+
 -- Resize splits when window is resized
 vim.api.nvim_create_autocmd("VimResized", {
 	desc = "Resize splits when window is resized",

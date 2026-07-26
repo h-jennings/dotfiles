@@ -206,6 +206,25 @@ return {
 		-- 	end,
 		-- 	desc = "Open lazygit",
 		-- },
+		-- Close the buffer, not the window. `:q` closes a window and exits
+		-- Neovim once it's the last one; `:bd` keeps Neovim alive but tears
+		-- down the layout when the buffer is in a split. `bufdelete` does
+		-- neither: it swaps the window to the most-recently-used listed
+		-- buffer, or an empty scratch buffer when nothing else is open.
+		{
+			"<leader>bd",
+			function()
+				require("snacks").bufdelete()
+			end,
+			desc = "Close buffer (keep window)",
+		},
+		{
+			"<leader>bo",
+			function()
+				require("snacks").bufdelete.other()
+			end,
+			desc = "Close other buffers",
+		},
 		{
 			"<C-`>",
 			function()
