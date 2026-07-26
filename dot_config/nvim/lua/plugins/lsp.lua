@@ -151,6 +151,7 @@ return {
 					"lua_ls",
 					"eslint",
 					"biome",
+					"oxlint",
 					"tailwindcss",
 					"jsonls",
 					"typos_lsp",
@@ -224,6 +225,7 @@ return {
 			vim.lsp.enable("lua_ls")
 			vim.lsp.enable("eslint")
 			vim.lsp.enable("biome")
+			vim.lsp.enable("oxlint")
 			vim.lsp.enable("tailwindcss")
 			vim.lsp.enable("jsonls")
 			vim.lsp.enable("typos_lsp")
