@@ -111,6 +111,35 @@ return {
 
 					map("n", "<leader>lr", "<cmd>LspRestart<cr>", "Restart LSP")
 
+					-- "Who imports this file?" — the whole-file counterpart to
+					-- `gA`. A Vue SFC's default export has no symbol to put the
+					-- cursor on, so symbol-based references can't answer it.
+					-- This is the same command VS Code's "Find File References"
+					-- runs, and vtsls attaches to `vue` buffers, so it works in
+					-- SFCs as well as plain TS.
+					if client and client.name == "vtsls" then
+						map("n", "gF", function()
+							client:exec_cmd({
+								command = "typescript.findAllFileReferences",
+								arguments = { vim.uri_from_bufnr(bufnr) },
+							}, { bufnr = bufnr }, function(err, result)
+								if err then
+									vim.notify("File references: " .. err.message, vim.log.levels.ERROR)
+									return
+								end
+								if not result or vim.tbl_isempty(result) then
+									vim.notify("No file references found", vim.log.levels.WARN)
+									return
+								end
+								vim.fn.setqflist({}, " ", {
+									title = "File references: " .. vim.fn.expand("%:t"),
+									items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
+								})
+								require("snacks").picker.qflist()
+							end)
+						end, "File references (who imports this file)")
+					end
+
 					-- Enable inlay hints if supported
 					if client and client:supports_method("textDocument/inlayHint") then
 						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
