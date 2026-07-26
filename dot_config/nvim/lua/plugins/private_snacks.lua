@@ -50,6 +50,21 @@ return {
 			-- nerd font version, and `os.editPreset = "nvim-remote"` — which is
 			-- the point: `e` on a file opens it in THIS Neovim, not a nested one.
 			win = { style = "lazygit" },
+			-- These are the `nvim-remote` preset's own commands with exactly
+			-- one word changed: `--remote-tab` -> `--remote`. The preset opens
+			-- every file in a NEW TAB, which is the safe choice for a tool that
+			-- can't see your layout, but wrong for browsing a diff file by file
+			-- — you end up with a tab per file you glanced at. `--remote` is
+			-- `:edit` in the window you were already in.
+			--
+			-- Explicit `os.edit`/`os.editAtLine` take precedence over
+			-- `os.editPreset`, which snacks still writes alongside them.
+			config = {
+				os = {
+					edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})',
+					editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
+				},
+			},
 		},
 		styles = {
 			lazygit = {
