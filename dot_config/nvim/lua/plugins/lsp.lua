@@ -152,6 +152,7 @@ return {
 					"eslint",
 					"biome",
 					"oxlint",
+					"vue_ls",
 					"tailwindcss",
 					"jsonls",
 					"typos_lsp",
@@ -159,8 +160,27 @@ return {
 				automatic_installation = false,
 			})
 
+			-- Vue 3.x runs in "hybrid mode": vue_ls owns the template/style blocks
+			-- and forwards TypeScript requests to whichever TS server is attached
+			-- to the *same* buffer. So vtsls must load `@vue/typescript-plugin`
+			-- and attach to `vue` files, or `.vue` gets no TypeScript at all.
+			local vue_language_server_path = vim.fs.joinpath(
+				vim.fn.stdpath("data"),
+				"mason/packages/vue-language-server/node_modules/@vue/language-server"
+			)
+
 			-- Configure LSP servers
 			vim.lsp.config("vtsls", {
+				-- lspconfig's defaults plus `vue`. Setting this replaces the
+				-- default list rather than extending it, so the others are
+				-- repeated here deliberately.
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"vue",
+				},
 				settings = {
 					typescript = {
 						updateImportsOnFileMove = { enabled = "always" },
@@ -214,6 +234,17 @@ return {
 						experimental = {
 							maxInlayHintLength = 65,
 						},
+						tsserver = {
+							globalPlugins = {
+								{
+									name = "@vue/typescript-plugin",
+									location = vue_language_server_path,
+									languages = { "vue" },
+									configNamespace = "typescript",
+									enableForWorkspaceTypeScriptVersions = true,
+								},
+							},
+						},
 					},
 				},
 			})
@@ -226,6 +257,7 @@ return {
 			vim.lsp.enable("eslint")
 			vim.lsp.enable("biome")
 			vim.lsp.enable("oxlint")
+			vim.lsp.enable("vue_ls")
 			vim.lsp.enable("tailwindcss")
 			vim.lsp.enable("jsonls")
 			vim.lsp.enable("typos_lsp")

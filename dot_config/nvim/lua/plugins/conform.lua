@@ -9,6 +9,7 @@ return {
 				typescriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
 				javascriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
 				json = { "biome", "prettier", stop_after_first = true },
+				vue = { "prettier", stop_after_first = true },
 				yaml = { "prettier" },
 				markdown = { "prettier" },
 				html = { "prettier" },

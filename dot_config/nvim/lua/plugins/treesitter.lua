@@ -13,6 +13,13 @@ return {
 				"markdown",
 				"markdown_inline",
 				"json",
+				-- `vue` parses the SFC shell and injects into the script/template/
+				-- style blocks, so those languages need parsers of their own.
+				"vue",
+				"javascript",
+				"html",
+				"css",
+				"scss",
 			})
 
 			-- On `main`, highlighting is no longer auto-enabled. Start treesitter
