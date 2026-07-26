@@ -152,6 +152,10 @@ return {
 					"eslint",
 					"biome",
 					"oxlint",
+					-- Installed for the binary only, not enabled as a server:
+					-- mason puts it on PATH, which is where conform picks it up
+					-- when a project has no local `node_modules/.bin/oxfmt`.
+					"oxfmt",
 					"vue_ls",
 					"tailwindcss",
 					"jsonls",
