@@ -14,9 +14,18 @@ return {
 				replace_in_directory = false,
 			},
 			integrations = {
-				grep_in_directory = function(directory)
-					require("snacks").picker.grep({ cwd = directory })
-				end,
+				-- `<c-s>` in yazi greps wherever you've navigated to. Both use
+				-- the built-in "snacks.picker" string rather than a hand-rolled
+				-- function: it titles the picker with the directory, and it
+				-- carries a `defer_fn` + `startinsert` workaround for something
+				-- that kicks the picker out of insert mode when it opens after
+				-- yazi closes. A custom function gets neither.
+				grep_in_directory = "snacks.picker",
+				-- `<c-s>` dispatches here instead when files are multi-selected
+				-- in yazi, so grep is scoped to just those paths. This defaulted
+				-- to "telescope", which isn't installed — multi-select + `<c-s>`
+				-- was a hard error.
+				grep_in_selected_files = "snacks.picker",
 			},
 		},
 		init = function()
