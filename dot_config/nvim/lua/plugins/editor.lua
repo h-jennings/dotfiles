@@ -41,6 +41,19 @@ return {
 				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
 				desc = "Buffer Diagnostics (Trouble)",
 			},
+			-- Reopens whatever a picker last sent here with `<a-t>`/`<a-a>`.
+			-- Trouble's own state survives `auto_close`, so this is how you get
+			-- a search result set back after dismissing the panel.
+			{
+				"<leader>xs",
+				"<cmd>Trouble snacks toggle<cr>",
+				desc = "Search results (Trouble)",
+			},
+			{
+				"<leader>xq",
+				"<cmd>Trouble qflist toggle<cr>",
+				desc = "Quickfix list (Trouble)",
+			},
 			-- Deliberately not `gr`: Neovim 0.11 ships `grr`/`gra`/`grn`/`gri`/
 			-- `grt`/`grx` as defaults, and a bare `gr` mapping is a strict
 			-- prefix of all six — every one of them would stall for

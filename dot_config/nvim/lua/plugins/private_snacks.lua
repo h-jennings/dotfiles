@@ -1,3 +1,18 @@
+-- Shared by the `files` and `grep` sources. Both previously used
+-- `node_modules/*`, which silently did the wrong thing: a glob containing a
+-- slash is anchored to the search root by both `rg -g` and `fd -E`, so only a
+-- top-level `node_modules` was excluded and every `packages/*/node_modules` in
+-- a monorepo leaked into results. `**/node_modules/**` matches at any depth.
+local exclude = {
+	"**/node_modules/**",
+	"**/.turbo/**",
+	"**/dist/**",
+	"**/.next/**",
+	"**/coverage/**",
+	"**/*.lock",
+	"**/pnpm-lock.yaml",
+}
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -62,17 +77,42 @@ return {
 				preset = "preview_top",
 				cycle = false,
 			},
+			-- A picker is modal: it closes the moment you pick something, which
+			-- is wrong for "find every use of X and work through them". These
+			-- two hand the result set off to something that sticks around.
+			-- `require` is deferred into the action body so this doesn't force
+			-- Trouble to load at startup just to read the spec.
+			actions = {
+				trouble_open = function(picker)
+					require("trouble.sources.snacks").open(picker, { type = "smart" })
+				end,
+				-- `add = true` appends instead of replacing, so several
+				-- searches can be accumulated into one working set.
+				trouble_add = function(picker)
+					require("trouble.sources.snacks").open(picker, { type = "smart", add = true })
+				end,
+			},
+			win = {
+				input = {
+					keys = {
+						-- Joins the existing `<a-*>` family. `<c-t>` is taken by
+						-- `tab` and `<c-a>` by `select_all`.
+						["<a-t>"] = { "trouble_open", mode = { "i", "n" } },
+						["<a-a>"] = { "trouble_add", mode = { "i", "n" } },
+					},
+				},
+			},
 			sources = {
 				files = {
 					hidden = true,
-					exclude = { "node_modules/*" },
+					exclude = exclude,
 				},
 				git_files = {
 					hidden = true,
 				},
 				grep = {
 					hidden = true,
-					exclude = { "node_modules/*" },
+					exclude = exclude,
 				},
 				lsp_symbols = {
 					filter = {
@@ -102,7 +142,14 @@ return {
 	--     <alt-i> - toggle ignored files
 	--     <alt-f> - toggle follow symlinks
 	--     <alt-r> - toggle regex mode
-	--     <alt-g> - toggle live mode
+	--     <ctrl-g> - toggle live mode
+	--
+	--   Making results persist (nothing is selected => acts on ALL results):
+	--     <ctrl-q> - send to quickfix; quicker.nvim makes it editable, so you
+	--                can retype matches in place and `:w` to write every file
+	--     <alt-t>  - send to Trouble (persistent, navigable tree panel)
+	--     <alt-a>  - ADD to Trouble, accumulating across several searches
+	--     <Tab>    - select individual items first to narrow what gets sent
 	keys = {
 		{
 			"<leader>ff",
@@ -196,8 +243,44 @@ return {
 			function()
 				require("snacks").picker.grep_word()
 			end,
-			desc = "Grep word under cursor",
-			mode = { "n", "x" },
+			desc = "Grep word under cursor (whole word)",
+		},
+		{
+			"<leader>*",
+			function()
+				-- `grep_word` defaults to `args = { "--word-regexp" }`. That's
+				-- right for `<cword>`, which is a complete word by definition,
+				-- but wrong for a visual selection: selecting `seFooB` out of
+				-- `useFooBar` has a word boundary at neither end, so ripgrep
+				-- returned nothing at all. Clearing `args` makes the selection
+				-- a plain substring search.
+				require("snacks").picker.grep_word({ args = {} })
+			end,
+			desc = "Grep selection (substring)",
+			mode = "x",
+		},
+		-- Narrower scopes than `g/`, for when the project-wide result set is
+		-- more noise than signal.
+		{
+			"<leader>/",
+			function()
+				require("snacks").picker.lines()
+			end,
+			desc = "Search lines in current buffer",
+		},
+		{
+			"<leader>?",
+			function()
+				require("snacks").picker.grep_buffers()
+			end,
+			desc = "Grep open buffers",
+		},
+		{
+			"<leader>fr",
+			function()
+				require("snacks").picker.resume()
+			end,
+			desc = "Resume last picker",
 		},
 		-- {
 		-- 	"<leader>gg",
