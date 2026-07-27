@@ -26,9 +26,10 @@ return {
 			modes = {
 				diagnostics = {
 					auto_refresh = true, -- auto refresh diagnostics
-					-- Backstop for buffers that predate the autocmd in
-					-- config/autocmds.lua. `filename` is normalized to
-					-- forward slashes by trouble.
+					-- The autocmd in config/autocmds.lua only covers buffers that
+					-- get read; a server can publish against a node_modules file
+					-- that was never loaded, and trouble lists any valid buffer.
+					-- `filename` is normalized to forward slashes.
 					filter = {
 						function(item)
 							return not item.filename:find("/node_modules/", 1, true)

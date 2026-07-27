@@ -2,13 +2,15 @@ return {
 	"stevearc/conform.nvim",
 	config = function()
 		require("conform").setup({
+			-- `biome-check` over `biome`: it runs `biome check --write`, so one
+			-- formatter covers formatting, safe lint fixes and import sorting.
 			formatters_by_ft = {
 				lua = { "stylua" },
-				javascript = { "biome", "oxfmt", "prettier", stop_after_first = true },
-				typescript = { "biome", "oxfmt", "prettier", stop_after_first = true },
-				typescriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
-				javascriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
-				json = { "biome", "prettier", stop_after_first = true },
+				javascript = { "biome-check", "oxfmt", "prettier", stop_after_first = true },
+				typescript = { "biome-check", "oxfmt", "prettier", stop_after_first = true },
+				typescriptreact = { "biome-check", "oxfmt", "prettier", stop_after_first = true },
+				javascriptreact = { "biome-check", "oxfmt", "prettier", stop_after_first = true },
+				json = { "biome-check", "prettier", stop_after_first = true },
 				-- No biome: its Vue support is script-block only, and
 				-- `stop_after_first` would let it beat oxfmt.
 				vue = { "oxfmt", "prettier", stop_after_first = true },
@@ -23,18 +25,16 @@ return {
 			-- hand-written list (biome also matches `.biome.json{,c}`; prettier
 			-- also checks the `prettier` key in `package.json`).
 			formatters = {
-				biome = { require_cwd = true },
+				["biome-check"] = { require_cwd = true },
 				oxfmt = { require_cwd = true },
 				prettier = { require_cwd = true },
 			},
+			-- `lsp_format` is left at its "never" default on purpose: with
+			-- `fallback`, a project that disqualifies every formatter above gets
+			-- restyled by whichever LSP answers — vue_ls was rewriting 54 lines
+			-- of an oxfmt repo per write.
 			format_on_save = {
 				timeout_ms = 3000,
-				-- Not `fallback`: when `require_cwd` disqualifies everything
-				-- above, that hands the buffer to whichever LSP advertises
-				-- formatting, in whatever style it likes — vue_ls was rewriting
-				-- 54 lines of an oxfmt repo per write. Cost: filetypes missing
-				-- from the list above are no longer formatted at all.
-				lsp_format = "never",
 			},
 		})
 	end,

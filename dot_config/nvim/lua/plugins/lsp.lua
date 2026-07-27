@@ -173,44 +173,6 @@ return {
 							)
 						end, "[T]oggle Inlay [H]ints")
 					end
-
-					-- Biome: Apply safe fixes on save
-					if client and client.name == "biome" then
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							buffer = bufnr,
-							callback = function()
-								-- Not `vim.lsp.buf.code_action({ apply = true })`: it's
-								-- async, so the write lands first and the edits arrive
-								-- after, re-dirtying the buffer and moving the cursor.
-								local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
-								params.context = {
-									only = { "source.fixAll.biome" },
-									diagnostics = {},
-									triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Automatic,
-								}
-
-								local res = client:request_sync("textDocument/codeAction", params, 1000, bufnr)
-								if not res or res.err or not res.result then
-									return
-								end
-
-								for _, action in ipairs(res.result) do
-									-- Some servers withhold the edit until resolve.
-									if
-										not action.edit
-										and action.data
-										and client:supports_method("codeAction/resolve")
-									then
-										local resolved = client:request_sync("codeAction/resolve", action, 1000, bufnr)
-										action = (resolved and not resolved.err and resolved.result) or action
-									end
-									if action.edit then
-										vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
-									end
-								end
-							end,
-						})
-					end
 				end,
 			})
 
