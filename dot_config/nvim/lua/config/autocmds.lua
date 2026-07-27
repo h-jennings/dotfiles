@@ -84,10 +84,9 @@ vim.api.nvim_create_autocmd("BufDelete", {
 	end,
 })
 
--- Dependency sources aren't yours to fix, so diagnostics on them are pure
--- noise: they follow a `gd` into a `.d.ts` and then sit in the workspace-wide
--- lists for the rest of the session. Disabling per buffer (rather than
--- detaching the client) keeps hover and go-to-definition working in there.
+-- Errors in dependencies aren't yours to fix, and they follow a `gd` into a
+-- `.d.ts` straight into the workspace-wide lists. Disabling per buffer, rather
+-- than detaching the client, keeps hover and go-to-definition working there.
 vim.api.nvim_create_autocmd("BufReadPost", {
 	desc = "Disable diagnostics in node_modules",
 	group = vim.api.nvim_create_augroup("no-node-modules-diagnostics", { clear = true }),

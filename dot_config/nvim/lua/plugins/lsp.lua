@@ -153,6 +153,15 @@ return {
 						end, "File references (who imports this file)")
 					end
 
+					-- Vue hybrid mode puts two inlay-hint providers on one buffer,
+					-- but nvim tracks a single document version for all of them:
+					-- whichever answers second makes the other's columns stale, and
+					-- the decoration provider throws "Invalid 'col'" mid-edit. vtsls
+					-- owns the TS hints here, so drop vue_ls's.
+					if client and client.name == "vue_ls" then
+						client.server_capabilities.inlayHintProvider = nil
+					end
+
 					-- Enable inlay hints if supported
 					if client and client:supports_method("textDocument/inlayHint") then
 						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
@@ -170,13 +179,35 @@ return {
 						vim.api.nvim_create_autocmd("BufWritePre", {
 							buffer = bufnr,
 							callback = function()
-								vim.lsp.buf.code_action({
-									context = {
-										only = { "source.fixAll.biome" },
-										diagnostics = {},
-									},
-									apply = true,
-								})
+								-- Not `vim.lsp.buf.code_action({ apply = true })`: it's
+								-- async, so the write lands first and the edits arrive
+								-- after, re-dirtying the buffer and moving the cursor.
+								local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
+								params.context = {
+									only = { "source.fixAll.biome" },
+									diagnostics = {},
+									triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Automatic,
+								}
+
+								local res = client:request_sync("textDocument/codeAction", params, 1000, bufnr)
+								if not res or res.err or not res.result then
+									return
+								end
+
+								for _, action in ipairs(res.result) do
+									-- Some servers withhold the edit until resolve.
+									if
+										not action.edit
+										and action.data
+										and client:supports_method("codeAction/resolve")
+									then
+										local resolved = client:request_sync("codeAction/resolve", action, 1000, bufnr)
+										action = (resolved and not resolved.err and resolved.result) or action
+									end
+									if action.edit then
+										vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+									end
+								end
 							end,
 						})
 					end

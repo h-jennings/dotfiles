@@ -26,11 +26,8 @@ return {
 			modes = {
 				diagnostics = {
 					auto_refresh = true, -- auto refresh diagnostics
-					-- Jumping into a dependency's `.d.ts` with `gd` attaches the
-					-- LSP to that buffer, and whatever it publishes there then
-					-- sits in the workspace-wide list for the rest of the
-					-- session. Those errors aren't actionable, so drop anything
-					-- under `node_modules`. `item.filename` is normalized to
+					-- Backstop for buffers that predate the autocmd in
+					-- config/autocmds.lua. `filename` is normalized to
 					-- forward slashes by trouble.
 					filter = {
 						function(item)

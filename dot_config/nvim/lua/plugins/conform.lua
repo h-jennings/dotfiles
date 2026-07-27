@@ -9,7 +9,9 @@ return {
 				typescriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
 				javascriptreact = { "biome", "oxfmt", "prettier", stop_after_first = true },
 				json = { "biome", "prettier", stop_after_first = true },
-				vue = { "prettier", stop_after_first = true },
+				-- No biome: its Vue support is script-block only, and
+				-- `stop_after_first` would let it beat oxfmt.
+				vue = { "oxfmt", "prettier", stop_after_first = true },
 				yaml = { "prettier" },
 				markdown = { "prettier" },
 				html = { "prettier" },
@@ -27,7 +29,12 @@ return {
 			},
 			format_on_save = {
 				timeout_ms = 3000,
-				lsp_format = "fallback",
+				-- Not `fallback`: when `require_cwd` disqualifies everything
+				-- above, that hands the buffer to whichever LSP advertises
+				-- formatting, in whatever style it likes — vue_ls was rewriting
+				-- 54 lines of an oxfmt repo per write. Cost: filetypes missing
+				-- from the list above are no longer formatted at all.
+				lsp_format = "never",
 			},
 		})
 	end,
