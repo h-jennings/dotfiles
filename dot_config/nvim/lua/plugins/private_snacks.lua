@@ -13,6 +13,36 @@ local exclude = {
 	"**/pnpm-lock.yaml",
 }
 
+-- snacks' default drops Variable/Constant/EnumMember, which hides every
+-- `export const foo = () => {}`. Not `default = true`: that includes String and
+-- Object, and lua_ls reports table literals structurally (~90 per file).
+local symbol_kinds = {
+	"Class",
+	"Constant",
+	"Constructor",
+	"Enum",
+	"EnumMember",
+	"Field",
+	"Function",
+	"Interface",
+	"Method",
+	"Module",
+	"Namespace",
+	"Package",
+	"Property",
+	"Struct",
+	"Trait",
+	"Variable",
+}
+
+local symbol_filter = {
+	default = symbol_kinds,
+	-- luals reports every `if` block as `Package`.
+	lua = vim.tbl_filter(function(kind)
+		return kind ~= "Package"
+	end, symbol_kinds),
+}
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -152,6 +182,8 @@ return {
 					hidden = true,
 					exclude = exclude,
 				},
+				lsp_symbols = { filter = symbol_filter },
+				lsp_workspace_symbols = { filter = symbol_filter },
 			},
 		},
 	},

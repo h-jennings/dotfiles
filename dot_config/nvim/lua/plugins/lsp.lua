@@ -122,15 +122,27 @@ return {
 					map("n", "cd", vim.lsp.buf.rename, "Rename")
 					map("n", "g.", vim.lsp.buf.code_action, "Code action")
 
-					map("n", "<leader>lr", "<cmd>LspRestart<cr>", "Restart LSP")
+					-- No `:LspRestart` on 0.12 — lspconfig bails when builtin `:lsp` exists.
+					map("n", "<leader>lr", "<cmd>lsp restart<cr>", "Restart LSP")
 
-					-- "Who imports this file?" — the whole-file counterpart to
-					-- `gA`. A Vue SFC's default export has no symbol to put the
-					-- cursor on, so symbol-based references can't answer it.
-					-- This is the same command VS Code's "Find File References"
-					-- runs, and vtsls attaches to `vue` buffers, so it works in
-					-- SFCs as well as plain TS.
 					if client and client.name == "vtsls" then
+						-- Restarts tsserver inside vtsls, so the client stays attached and
+						-- `<leader>lr`'s detach/reattach of every other server is avoided.
+						map("n", "<leader>lt", function()
+							client:exec_cmd({ command = "typescript.restartTsServer" }, { bufnr = bufnr })
+						end, "Restart tsserver")
+
+						-- For stale tsconfig/node_modules after a branch switch or install.
+						map("n", "<leader>lp", function()
+							client:exec_cmd({ command = "typescript.reloadProjects" }, { bufnr = bufnr })
+						end, "Reload TS projects")
+
+						-- "Who imports this file?" — the whole-file counterpart to
+						-- `gA`. A Vue SFC's default export has no symbol to put the
+						-- cursor on, so symbol-based references can't answer it.
+						-- This is the same command VS Code's "Find File References"
+						-- runs, and vtsls attaches to `vue` buffers, so it works in
+						-- SFCs as well as plain TS.
 						map("n", "gF", function()
 							client:exec_cmd({
 								command = "typescript.findAllFileReferences",

@@ -33,6 +33,7 @@ return {
 			{ "<leader>x", group = "trouble / lists" },
 			{ "<leader>b", group = "buffer" },
 			{ "<leader>c", group = "calls" },
+			{ "<leader>l", group = "lsp" },
 			{ "<leader>t", group = "toggle" },
 			{ "<leader>s", group = "treesitter swap" },
 			{ "g", group = "goto / grep" },
