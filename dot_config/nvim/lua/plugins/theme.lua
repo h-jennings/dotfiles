@@ -1,24 +1,15 @@
 return {
 	{
-		"webhooked/kanso.nvim",
+		"h-jennings/nushu.nvim",
+		-- Local checkout while working out the quirks; remove `dir` to install
+		-- from GitHub once stable
+		dir = vim.fn.expand("~/repos/personal/nushu.nvim"),
 		lazy = false,
 		priority = 1000,
 		config = function()
-			-- Slightly modified version of the default float colors for better contrast with the background
-			local float = {
-				ink = { bg = "#22262D", fg = "#C5C9C7", bg_border = "#22262D", fg_border = "#75797f" },
-				pearl = { bg = "#e2e1df", fg = "#22262D", bg_border = "#e2e1df", fg_border = "#6d6d69" },
-			}
-
-			require("kanso").setup({
+			require("nushu").setup({
 				bold = false,
 				italics = false,
-				colors = {
-					theme = {
-						ink = { ui = { float = float.ink } },
-						pearl = { ui = { float = float.pearl } },
-					},
-				},
 			})
 		end,
 	},
@@ -29,11 +20,11 @@ return {
 			default = "dark",
 			set_dark_mode = function()
 				vim.api.nvim_set_option_value("background", "dark", {})
-				vim.cmd([[colorscheme kanso-ink]])
+				vim.cmd([[colorscheme nushu]])
 			end,
 			set_light_mode = function()
 				vim.api.nvim_set_option_value("background", "light", {})
-				vim.cmd([[colorscheme kanso-pearl]])
+				vim.cmd([[colorscheme nushu]])
 			end,
 		},
 	},
