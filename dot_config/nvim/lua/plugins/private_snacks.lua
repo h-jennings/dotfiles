@@ -152,21 +152,6 @@ return {
 					hidden = true,
 					exclude = exclude,
 				},
-				lsp_symbols = {
-					filter = {
-						default = {
-							"Class",
-							"Constructor",
-							"Enum",
-							"Function",
-							"Interface",
-							"Method",
-							"Struct",
-						},
-						markdown = true,
-						help = true,
-					},
-				},
 			},
 		},
 	},
