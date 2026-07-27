@@ -9,14 +9,10 @@
 #   tmux pane     -> herdr pane
 
 [theme]
-# Follow macOS light/dark appearance.
-# Dark: "terminal" inherits your exact Ghostty nushu-dark palette.
-# Light: catppuccin-latte, because nushu-light maps its bright/white ANSI slots
-# to grays (e.g. #8d949e on a #f7f6f1 background) that render washed-out and
-# hard to read in herdr's UI. catppuccin-latte's warm cream is close in feel.
+# Matches Ghostty (Kanagawa Wave/Lotus) and nvim (kanagawa.nvim).
 auto_switch = true
-dark_name = "terminal"
-light_name = "catppuccin-latte"
+dark_name = "kanagawa"
+light_name = "kanagawa-lotus"
 
 [terminal]
 # tmux `new-window -c "#{pane_current_path}"`: new panes/tabs/workspaces

@@ -2,7 +2,7 @@ font-family=TX-02
 font-size=14
 adjust-cell-height = 20%
 font-feature = -liga
-theme=light:nushu-light,dark:nushu-dark
+theme = light:Kanagawa Lotus,dark:Kanagawa Wave
 
 cursor-style=block
 shell-integration-features = no-cursor
