@@ -2,7 +2,8 @@ font-family=TX-02
 font-size=14
 adjust-cell-height = 20%
 font-feature = -liga
-theme = light:Kanagawa Lotus,dark:Kanagawa Wave
+# Light follows nvim's nushu (the anchor) exactly; dark stays Kanagawa Wave.
+theme = light:nushu-light,dark:Kanagawa Wave
 
 cursor-style=block
 shell-integration-features = no-cursor

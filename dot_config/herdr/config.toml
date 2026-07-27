@@ -1,3 +1,4 @@
+onboarding = false
 # herdr configuration — ported from ~/.tmux.conf on 2026-07-24
 # Reference: https://herdr.dev/docs/configuration/
 # Reload after edits:  prefix+r   (or `herdr server reload-config`)
@@ -9,10 +10,18 @@
 #   tmux pane     -> herdr pane
 
 [theme]
-# Matches Ghostty (Kanagawa Wave/Lotus) and nvim (kanagawa.nvim).
+# Dark: kanagawa, matching Ghostty's Kanagawa Wave.
+# Light: nvim's nushu-light (#f8f6f1 warm off-white) is the anchor and Ghostty
+# renders it exactly, but Herdr has no nushu theme and "terminal" inheritance
+# is not an option in light mode — nushu-light maps its bright/white ANSI slots
+# to mid-grays (e.g. #8d949e on #f7f6f1) that wash out in Herdr's chrome.
+# rose-pine-dawn (#faf4ed) is the closest built-in: same warm off-white cream,
+# where kanagawa-lotus (#f2ecbc) reads as a saturated yellow parchment next to
+# it. Fall back to catppuccin-latte if the muted mauve text feels too low
+# contrast — it is more readable but a cooler, greyer base.
 auto_switch = true
 dark_name = "kanagawa"
-light_name = "kanagawa-lotus"
+light_name = "rose-pine-dawn"
 
 [terminal]
 # tmux `new-window -c "#{pane_current_path}"`: new panes/tabs/workspaces
