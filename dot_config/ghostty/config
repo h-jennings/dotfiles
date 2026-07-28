@@ -1,7 +1,12 @@
-font-family=TX-02
+# Family name is "Berkeley Mono" even for v2 — "TX-02" is only the product
+# name and shows up in the font's Unique Name, not a name Ghostty can match.
+font-family = Berkeley Mono
 font-size=14
 adjust-cell-height = 20%
 font-feature = -liga
+# Blend in linear space so stem weight stays consistent across the
+# light/dark theme switch below.
+alpha-blending = linear-corrected
 # Light follows nvim's nushu (the anchor) exactly; dark stays Kanagawa Wave.
 theme = light:nushu-light,dark:Kanagawa Wave
 
@@ -9,6 +14,10 @@ cursor-style=block
 shell-integration-features = no-cursor
 cursor-style-blink=false
 
+
+# Default 0.7 dims the unfocused split, so the same text renders differently
+# pane-to-pane. Keep splits identical regardless of focus.
+unfocused-split-opacity = 1
 
 window-padding-balance=true
 macos-titlebar-style=hidden
