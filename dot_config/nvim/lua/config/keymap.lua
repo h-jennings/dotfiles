@@ -12,6 +12,16 @@ vim.keymap.set("n", "<leader>tv", function()
 	vim.diagnostic.config({ virtual_lines = not shown and { current_line = true } or false })
 end, { noremap = true, silent = true, desc = "Toggle diagnostic virtual lines" })
 
+-- `hlsearch` keeps matches lit until something clears them, and `<Esc>` is
+-- otherwise a no-op in normal mode. The trailing `<Esc>` keeps pending state
+-- (counts, operators) cancelling as usual.
+vim.keymap.set(
+	"n",
+	"<Esc>",
+	"<cmd>nohlsearch<CR><Esc>",
+	{ noremap = true, silent = true, desc = "Clear search highlight" }
+)
+
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
 vim.keymap.set("n", "<C-j>", ":cnext<CR>", opts)

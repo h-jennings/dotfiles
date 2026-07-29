@@ -185,6 +185,57 @@ return {
 							)
 						end, "[T]oggle Inlay [H]ints")
 					end
+
+					-- Wash the other occurrences of whatever the cursor is on, so a
+					-- token reads as a reference without opening `gA`. No `enable()`
+					-- API for this one on 0.12, so it's a hand-rolled pair: the handler
+					-- adds extmarks without clearing first, which is what
+					-- `clear_references` is for. One pair per buffer, not per client —
+					-- hence the guard, since LspAttach fires once per client.
+					if
+						client
+						and client:supports_method("textDocument/documentHighlight")
+						and not vim.b[bufnr].document_highlight_attached
+					then
+						vim.b[bufnr].document_highlight_attached = true
+
+						-- Buffer-scoped autocmds in a shared group, so Neovim drops them
+						-- with the buffer. A per-buffer group would leak, and couldn't be
+						-- deleted on LspDetach anyway — that fires per client.
+						local group = vim.api.nvim_create_augroup("lsp-document-highlight", { clear = false })
+
+						-- In an SFC vue_ls and vtsls both answer with the same ranges but
+						-- different kinds, so the declaration's wash lands on whichever
+						-- shade is drawn last. Accepted: `document_highlight()` takes no
+						-- say in which clients answer, and both shades are subtle.
+						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+							desc = "Highlight references to the symbol under the cursor",
+							group = group,
+							buffer = bufnr,
+							callback = vim.lsp.buf.document_highlight,
+						})
+
+						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+							desc = "Clear reference highlights",
+							group = group,
+							buffer = bufnr,
+							callback = function()
+								vim.lsp.buf.clear_references()
+							end,
+						})
+
+						-- Otherwise a dead server's marks sit there until the next cursor
+						-- move. The autocmds can stay: with nothing left to answer, the
+						-- request is a no-op.
+						vim.api.nvim_create_autocmd("LspDetach", {
+							desc = "Drop reference highlights when a server detaches",
+							group = group,
+							buffer = bufnr,
+							callback = function()
+								vim.lsp.buf.clear_references()
+							end,
+						})
+					end
 				end,
 			})
 

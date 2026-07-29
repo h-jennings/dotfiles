@@ -23,7 +23,10 @@ vim.opt.showbreak = "↪ " -- Visual indicator for wrapped lines
 -- Search settings
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.hlsearch = false
+-- Matches stay lit after `/`, so a search doubles as "show me every
+-- occurrence" rather than just a jump. The theme separates the two states:
+-- `CurSearch` is opaque for the match you're on, `Search` a wash for the rest.
+vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 -- Appearance
