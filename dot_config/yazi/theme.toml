@@ -1,0 +1,18 @@
+# Yazi's own theme, layered on top of a flavor. yazi merges this file over the
+# active flavor's flavor.toml, and this file always wins — so anything set here
+# is a deliberate deviation from nushu, and it should normally stay empty apart
+# from [flavor].
+#
+# The two flavors are generated from nushu.nvim's palette
+# (tools/gen-yazi-flavors.lua) and symlinked in from that checkout, so the file
+# manager tracks the editor theme automatically. Override styles here rather
+# than editing the flavor, which is regenerated.
+#
+# Dark/light is chosen by yazi at launch, from the terminal's reported
+# appearance — not from Neovim's `background`. Since <C-n> starts a fresh yazi
+# each time, a variant switch is picked up on the next open, not in a window
+# that's already up.
+
+[flavor]
+dark  = "nushu-dark"
+light = "nushu-light"
