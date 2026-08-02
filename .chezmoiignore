@@ -1,3 +1,20 @@
 **/.DS_Store
 .DS_Store
 .vscode/
+
+# Zed's prompt library is a live LMDB database (incl. a process-local lock
+# file). Binary, rewritten on every edit, never mergeable.
+.config/zed/prompts
+.config/zed/prompts/**
+
+# Compiled Python bytecode: regenerated automatically, pinned to one
+# interpreter version.
+**/__pycache__
+**/__pycache__/**
+**/*.pyc
+
+# Claude Code's own convention for per-machine settings.
+**/settings.local.json
+
+# Symlink into /opt/homebrew; dangles wherever hunk isn't installed.
+.claude/skills/hunk-review
