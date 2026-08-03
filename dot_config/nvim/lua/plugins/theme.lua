@@ -1,9 +1,10 @@
 return {
 	{
+		-- Installed from GitHub now that it is published. To go back to hacking
+		-- on it locally, add `dir = vim.fn.expand("~/repos/personal/nushu.nvim")`
+		-- — but note ~/.config/yazi/flavors symlinks into lazy's copy of this
+		-- plugin, so a local checkout also wants those symlinks repointed.
 		"h-jennings/nushu.nvim",
-		-- Local checkout while working out the quirks; remove `dir` to install
-		-- from GitHub once stable
-		dir = vim.fn.expand("~/repos/personal/nushu.nvim"),
 		lazy = false,
 		priority = 1000,
 		config = function()
