@@ -239,6 +239,39 @@ return {
 				end,
 			})
 
+			-- nvim 0.12's builtin capability providers (document_color, semantic
+			-- tokens, …) leak a stopped client's id: `Client:_on_detach` only forgets
+			-- the client while `client:supports_method()` still answers true, which it
+			-- doesn't for a *dynamically* registered capability once the server is
+			-- gone (tailwindcss registers `textDocument/documentColor` that way). The
+			-- provider keeps the dead id, and document_color re-requests on every edit
+			-- via `on_lines`, so `assert(get_client_by_id(id))` then fires on every
+			-- keystroke. Drop the id ourselves, first, on every detach.
+			vim.api.nvim_create_autocmd("LspDetach", {
+				desc = "Forget a detaching client in builtin LSP capability providers",
+				callback = function(args)
+					-- Private module on purpose — nothing public reaches this state.
+					-- pcall so an upgrade that fixes or renames it degrades to a no-op
+					-- instead of erroring on every detach.
+					local ok, providers = pcall(function()
+						return vim.lsp._capability.all
+					end)
+					if not ok then
+						return
+					end
+
+					for _, Provider in pairs(providers) do
+						local provider = Provider.active[args.buf]
+						if provider and provider.client_state[args.data.client_id] then
+							provider:on_detach(args.data.client_id)
+							if not next(provider.client_state) then
+								provider:destroy()
+							end
+						end
+					end
+				end,
+			})
+
 			-- Setup Mason
 			require("mason").setup()
 			require("mason-lspconfig").setup({
@@ -260,6 +293,10 @@ return {
 					"typos_lsp",
 				},
 				automatic_installation = false,
+				-- Otherwise mason-lspconfig enables every server it finds installed,
+				-- including leftovers no longer listed above. The explicit
+				-- `vim.lsp.enable()` calls below are the source of truth.
+				automatic_enable = false,
 			})
 
 			-- Vue 3.x runs in "hybrid mode": vue_ls owns the template/style blocks
@@ -349,6 +386,33 @@ return {
 						},
 					},
 				},
+			})
+
+			-- lspconfig's tailwindcss root_dir ends its marker list with `.git` — a
+			-- fallback for v4, where `tailwind.config.*` is optional — so the server
+			-- starts in *any* git repo holding a JS/TS/CSS file, tailwind or not.
+			-- Same list without that fallback: a real config file, or `tailwindcss`
+			-- named in package.json, which is how v4 projects pull it in.
+			vim.lsp.config("tailwindcss", {
+				root_dir = function(bufnr, on_dir)
+					local fname = vim.api.nvim_buf_get_name(bufnr)
+					local root_files = {
+						"tailwind.config.js",
+						"tailwind.config.cjs",
+						"tailwind.config.mjs",
+						"tailwind.config.ts",
+						"postcss.config.js",
+						"postcss.config.cjs",
+						"postcss.config.mjs",
+						"postcss.config.ts",
+					}
+					root_files = require("lspconfig.util").insert_package_json(root_files, "tailwindcss", fname)
+
+					local found = vim.fs.find(root_files, { path = fname, upward = true })[1]
+					if found then
+						on_dir(vim.fs.dirname(found))
+					end
+				end,
 			})
 
 			-- Enable LSP servers
