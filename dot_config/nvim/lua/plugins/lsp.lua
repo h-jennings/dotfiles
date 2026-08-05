@@ -22,12 +22,11 @@ return {
 			-- Configure diagnostics
 			vim.diagnostic.config({
 				underline = true,
-				-- Inline text on every diagnostic line is noise, and it fights
-				-- `wrap`. `virtual_lines` renders the full message below the
-				-- cursor's line only, so messages stay readable without
-				-- permanently cluttering the buffer. Toggle with `<leader>tv`.
+				-- Undercurl + gutter signs only. Inline text and virtual lines
+				-- both shift the buffer around as the cursor moves; read the
+				-- full message with `gl` or toggle lines with `<leader>tv`.
 				virtual_text = false,
-				virtual_lines = { current_line = true },
+				virtual_lines = false,
 				-- Errors win the gutter sign and sort first in floats/lists
 				-- when a line carries more than one severity.
 				severity_sort = true,
