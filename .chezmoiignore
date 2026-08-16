@@ -24,3 +24,8 @@
 
 # Per-machine git identity, pulled in via [include] from .gitconfig.
 .gitconfig.local
+
+# Vendored yazi plugin sources. package.toml pins them; `ya pkg install`
+# restores the directory on a new machine.
+.config/yazi/plugins
+.config/yazi/plugins/**
