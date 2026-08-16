@@ -43,3 +43,36 @@ vim.keymap.set("v", "<leader>R", function()
 		end
 	end)
 end, opts)
+
+-- `<C-w>+` takes a count but doesn't repeat, so every nudge is a fresh chord.
+-- This holds the keyboard until you leave, which matches herdr's own modal
+-- resize (prefix+shift+r) instead of competing with it. Keys are read with
+-- getcharstr(), so they bypass mappings and can't collide with anything.
+vim.keymap.set("n", "<leader>w", function()
+	local step = 2
+	local actions = {
+		h = "vertical resize -" .. step,
+		l = "vertical resize +" .. step,
+		j = "resize -" .. step,
+		k = "resize +" .. step,
+		["="] = "wincmd =",
+	}
+	while true do
+		vim.cmd("redraw")
+		vim.api.nvim_echo({ { "-- RESIZE --  h/l width  j/k height  =  <Esc>", "ModeMsg" } }, false, {})
+		local ok, ch = pcall(vim.fn.getcharstr)
+		if not ok then -- <C-c>
+			break
+		end
+		if actions[ch] then
+			pcall(vim.cmd, actions[ch])
+		elseif ch == "\27" or ch == "q" then
+			break
+		else
+			-- Replay whatever else you typed rather than swallowing it.
+			vim.api.nvim_feedkeys(ch, "n", false)
+			break
+		end
+	end
+	vim.api.nvim_echo({}, false, {})
+end, { noremap = true, silent = true, desc = "Resize mode" })
