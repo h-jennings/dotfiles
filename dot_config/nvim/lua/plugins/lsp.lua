@@ -22,10 +22,22 @@ return {
 			-- Configure diagnostics
 			vim.diagnostic.config({
 				underline = true,
-				-- Undercurl + gutter signs only. Inline text and virtual lines
-				-- both shift the buffer around as the cursor moves; read the
-				-- full message with `gl` or toggle lines with `<leader>tv`.
-				virtual_text = false,
+				-- Current-line-only virtual text. Renders past end-of-line so
+				-- the buffer never shifts as the cursor moves. `eol` over
+				-- `eol_right_align`: right-aligning held the message steady
+				-- but parked it a full window away from the code it describes,
+				-- which was worse to read than the horizontal drift. Messages
+				-- still truncate at the window edge — escalate to virtual
+				-- lines with `<leader>tv` or the float with `gl`.
+				virtual_text = {
+					current_line = true,
+					virt_text_pos = "eol",
+					prefix = "",
+					-- Wide gap so the message reads as annotation rather than
+					-- as a trailing part of the expression, which matters on
+					-- lines already carrying grey inlay hints.
+					spacing = 6,
+				},
 				virtual_lines = false,
 				-- Errors win the gutter sign and sort first in floats/lists
 				-- when a line carries more than one severity.
@@ -430,7 +442,7 @@ return {
 	},
 	{
 		"saghen/blink.cmp",
-		version = "v0.*",
+		version = "1.*",
 		opts = {
 			keymap = {
 				preset = "default",

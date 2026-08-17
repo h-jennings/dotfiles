@@ -5,11 +5,18 @@ vim.keymap.set("n", "<leader>tw", function()
 	vim.opt.wrap = not vim.opt.wrap:get()
 end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 
--- Toggle diagnostic virtual lines. Handy when the message below the cursor
--- gets in the way while editing dense code.
+-- Swap the current-line diagnostic between inline virtual text and full
+-- virtual lines. Inline truncates at the window edge, which loses the tail of
+-- long messages (TypeScript especially), so this is the escape hatch. The two
+-- are mutually exclusive: enabling both renders the same message twice.
+local inline_diagnostics
 vim.keymap.set("n", "<leader>tv", function()
-	local shown = vim.diagnostic.config().virtual_lines
-	vim.diagnostic.config({ virtual_lines = not shown and { current_line = true } or false })
+	local lines_shown = vim.diagnostic.config().virtual_lines
+	inline_diagnostics = vim.diagnostic.config().virtual_text or inline_diagnostics
+	vim.diagnostic.config({
+		virtual_lines = not lines_shown and { current_line = true } or false,
+		virtual_text = lines_shown and inline_diagnostics or false,
+	})
 end, { noremap = true, silent = true, desc = "Toggle diagnostic virtual lines" })
 
 -- `hlsearch` keeps matches lit until something clears them, and `<Esc>` is
