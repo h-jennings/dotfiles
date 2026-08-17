@@ -5,6 +5,23 @@
 	editor = nvim
 [rerere]
     enabled = true
+    # Replayed resolutions get staged, not left dirty for a manual `git add`.
+    # Without this rerere still does the work but nags on every rebase step.
+    autoUpdate = true
+[merge]
+	# zdiff3 adds the merge base between the two sides, so a conflict shows
+	# what each side changed *from* rather than just the two end states. Turns
+	# "both touched this" into "one reindented, one changed the value".
+	conflictStyle = zdiff3
+	# Stock preset shipped with git; layout is "(LOCAL,BASE,REMOTE)/MERGED" —
+	# the three sides across the top, merged buffer below, all in nvim diff
+	# mode: `]c`/`[c` and `:diffget LOCAL|BASE|REMOTE`. Not the numbered
+	# variants: nvimdiff1 drops BASE, nvimdiff2 drops it too, nvimdiff3 shows
+	# only MERGED (which is just `nvim <file>` with extra steps).
+	tool = nvimdiff
+[mergetool]
+	# No .orig files left behind once the merge is resolved.
+	keepBackup = false
 [rebase]
 	updateRefs = true
 [credential "https://github.com"]
