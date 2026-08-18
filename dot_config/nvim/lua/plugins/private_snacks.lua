@@ -80,19 +80,38 @@ return {
 			-- nerd font version, and `os.editPreset = "nvim-remote"` — which is
 			-- the point: `e` on a file opens it in THIS Neovim, not a nested one.
 			win = { style = "lazygit" },
-			-- These are the `nvim-remote` preset's own commands with exactly
-			-- one word changed: `--remote-tab` -> `--remote`. The preset opens
-			-- every file in a NEW TAB, which is the safe choice for a tool that
-			-- can't see your layout, but wrong for browsing a diff file by file
-			-- — you end up with a tab per file you glanced at. `--remote` is
-			-- `:edit` in the window you were already in.
+			-- These are the `nvim-remote` preset's own commands with two
+			-- changes: `--remote-tab` -> `--remote`, and the bare `"q"` ->
+			-- `'<C-\><C-N>q'`.
+			--
+			-- The tab one: the preset opens every file in a NEW TAB, which is
+			-- the safe choice for a tool that can't see your layout, but wrong
+			-- for browsing a diff file by file — you end up with a tab per file
+			-- you glanced at. `--remote` is `:edit` in the window you were
+			-- already in.
+			--
+			-- The `q` one is the one that hurt. lazygit lives in a terminal
+			-- buffer, so Neovim is in TERMINAL mode the whole time you're
+			-- driving it, and `--remote-send "q"` is keyboard input: it goes
+			-- straight through to the job — lazygit's own quit key. So `e`
+			-- didn't hide the float, it killed the process (and `auto_close`
+			-- then wiped the buffer), and the next `<leader>gg` booted a cold
+			-- lazygit: selection back on the first file, panels and diff scroll
+			-- reset. `<C-\><C-N>` is Neovim's terminal-mode escape — consumed
+			-- by Neovim, never forwarded — so the `q` after it lands on the
+			-- buffer-local `q -> hide` that snacks' terminal style defines.
+			-- Window goes away, process keeps running. `Snacks.lazygit()` is
+			-- `Snacks.terminal.toggle` underneath, keyed on cmd + cwd, so
+			-- `<leader>gg` re-shows THAT lazygit exactly as you left it.
 			--
 			-- Explicit `os.edit`/`os.editAtLine` take precedence over
 			-- `os.editPreset`, which snacks still writes alongside them.
 			config = {
 				os = {
-					edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})',
-					editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
+					-- Long-bracket strings: the key notation carries a
+					-- backslash, and `'...'` keeps the shell from eating it.
+					edit = [==[[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send '<C-\><C-N>q' && nvim --server "$NVIM" --remote {{filename}})]==],
+					editAtLine = [==[[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send '<C-\><C-N>q' && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ':{{line}}<CR>')]==],
 				},
 			},
 		},
