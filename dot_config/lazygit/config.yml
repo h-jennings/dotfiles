@@ -23,7 +23,21 @@ customCommands:
 gui:
   sidePanelWidth: 0.2
 git:
+  # `|` (universal.cyclePagers) walks this list, so swapping the diff layout is
+  # a keypress rather than a config edit. First entry is the one lazygit starts
+  # on; the toast names the one you land on. The layout word is an argument to
+  # the wrapper, which is also what auto-detects light/dark.
   pagers:
-    - colorArg: always
-      pager: ~/.config/lazygit/delta-auto.sh
+    - name: side-by-side
+      colorArg: always
+      pager: ~/.config/lazygit/delta-auto.sh side-by-side
+    - name: stacked
+      colorArg: always
+      pager: ~/.config/lazygit/delta-auto.sh stacked
+    # Uncomment and move to the top of the list to have the layout follow the
+    # window instead: side-by-side at >=160 columns, stacked below that. `|`
+    # still cycles past it to force either layout by hand.
+    # - name: auto
+    #   colorArg: always
+    #   pager: ~/.config/lazygit/delta-auto.sh auto
   autoForwardBranches: "none"
