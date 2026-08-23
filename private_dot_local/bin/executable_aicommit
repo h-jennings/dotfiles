@@ -11,4 +11,4 @@ if git diff --staged --quiet; then
 fi
 
 git diff --staged | pbcopy
-open "raycast://ai-command/git-commit-message"
+open "raycast://extensions/raycast/ai/git-commit-message"
