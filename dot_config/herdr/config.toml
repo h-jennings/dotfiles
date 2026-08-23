@@ -36,6 +36,7 @@ copy_on_select = true
 # Sort the agent sidebar as an attention queue: blocked/done agents bubble to
 # the top, so the most urgent agent is always at the top of the list.
 agent_panel_sort = "priority"
+show_agent_labels_on_pane_borders = true
 
 # Show an in-app toast when a backgrounded agent changes state (done / needs
 # attention) so you notice there's a prefix+o target waiting.
