@@ -16,7 +16,6 @@ function y() {
 # aliases
 alias lg="lazygit"
 alias v="nvim"
-alias aicommit="git diff --staged | pbcopy; open raycast://ai-commands/git-commit-message"
 
 # tools
 eval "$(mise activate zsh)"
