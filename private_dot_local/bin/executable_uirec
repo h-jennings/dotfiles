@@ -1,0 +1,276 @@
+#!/bin/bash
+# uirec — queue a CleanShot recording cropped to an exact Chrome viewport,
+#         then auto-compress the result into a folder on the Desktop.
+set -euo pipefail
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/uirec"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/uirec"
+
+# ---- defaults (override any of these in $CONFIG_DIR/config.sh) ------------
+VIEWPORT_W=1512
+VIEWPORT_H=982
+OUT_DIR="$HOME/Desktop/Recordings"
+OUT_FPS=30
+OUT_CRF=23
+OUT_SCALE=1          # 1 = logical size (1512 wide), 2 = keep full retina
+AUDIO=keep           # keep | strip
+UI_HEIGHT_HINT=87    # first guess at Chrome's toolbar height; self-corrects
+WATCH_TIMEOUT=7200   # give up waiting for a recording after this many seconds
+DISPLAY_INDEX=1
+# ---------------------------------------------------------------------------
+
+[ -f "$CONFIG_DIR/config.sh" ] && . "$CONFIG_DIR/config.sh"
+
+LABEL=""; DRY_RUN=0; NO_ENCODE=0; SHOT=0; CMD=queue
+
+die()  { printf 'uirec: %s\n' "$*" >&2; exit 1; }
+info() { printf '%s\n' "$*" >&2; }
+
+usage() {
+  cat <<'USAGE'
+uirec — queue a CleanShot recording cropped to an exact Chrome viewport.
+
+  uirec [options]            size Chrome, queue the recording, auto-encode
+  uirec doctor [--shot]      check setup and print the computed geometry
+  uirec cancel               stop a watcher waiting for a recording
+  uirec reset                hand Chrome back to AeroSpace tiling
+
+Options
+  -p, --preset NAME      mbp14 (default) mbp16 mba13 imac 1080p 720p ipadpro
+  -w, --width N          viewport width in points
+  -H, --height N         viewport height in points
+  -l, --label TEXT       name the output file (checkout-flow-2026-08-23-1432.mp4)
+      --fps N            output frame rate            (default 30)
+      --crf N            x264 quality, lower = better (default 23)
+      --scale N          1 = logical, 2 = full retina (default 1)
+      --audio            keep audio                   (default)
+      --no-audio         strip audio
+      --no-encode        leave the CleanShot original alone
+  -n, --dry-run          size the window and print the geometry + URL,
+                         but do not arm CleanShot or queue an encode
+  -h, --help             this
+USAGE
+}
+
+preset() {
+  case "$1" in
+    mbp14)   VIEWPORT_W=1512; VIEWPORT_H=982  ;;
+    mbp16)   VIEWPORT_W=1728; VIEWPORT_H=1117 ;;
+    mba13)   VIEWPORT_W=1470; VIEWPORT_H=956  ;;
+    imac)    VIEWPORT_W=2048; VIEWPORT_H=1152 ;;
+    1080p)   VIEWPORT_W=1920; VIEWPORT_H=1080 ;;
+    720p)    VIEWPORT_W=1280; VIEWPORT_H=720  ;;
+    ipadpro) VIEWPORT_W=1024; VIEWPORT_H=1366 ;;
+    *) die "unknown preset '$1'" ;;
+  esac
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    doctor|cancel|reset) CMD=$1; shift ;;
+    -p|--preset)  preset "$2"; shift 2 ;;
+    -w|--width)   VIEWPORT_W=$2; shift 2 ;;
+    -H|--height)  VIEWPORT_H=$2; shift 2 ;;
+    -l|--label)   LABEL=$2; shift 2 ;;
+    --fps)        OUT_FPS=$2; shift 2 ;;
+    --crf)        OUT_CRF=$2; shift 2 ;;
+    --scale)      OUT_SCALE=$2; shift 2 ;;
+    --audio)      AUDIO=keep; shift ;;
+    --no-audio)   AUDIO=strip; shift ;;
+    --no-encode)  NO_ENCODE=1; shift ;;
+    --shot)       SHOT=1; shift ;;
+    -n|--dry-run) DRY_RUN=1; shift ;;
+    -h|--help)    usage; exit 0 ;;
+    *) die "unknown argument '$1' (try --help)" ;;
+  esac
+done
+
+# --- screen geometry, via AppKit (points, bottom-left origin) --------------
+read -r SCREEN_W SCREEN_H MENUBAR_H USABLE_H <<EOF
+$(osascript -l JavaScript -e '
+ObjC.import("AppKit");
+var s = $.NSScreen.screens.js[0], f = s.frame, v = s.visibleFrame;
+var menubar = f.size.height - (v.origin.y + v.size.height);
+[f.size.width, f.size.height, menubar, v.size.height].map(Math.round).join(" ")')
+EOF
+[ -n "${SCREEN_H:-}" ] || die "could not read screen geometry"
+
+# --- Chrome plumbing -------------------------------------------------------
+chrome_running() { pgrep -x "Google Chrome" >/dev/null 2>&1; }
+
+chrome_measure() {
+  osascript <<'OSA' 2>&1
+tell application "Google Chrome"
+  if (count of windows) is 0 then error "uirec-no-window"
+  execute front window's active tab javascript ¬
+    "JSON.stringify({sx:screenX,sy:screenY,ow:outerWidth,oh:outerHeight,iw:innerWidth,ih:innerHeight,dpr:devicePixelRatio})"
+end tell
+OSA
+}
+
+chrome_set_bounds() { # left top right bottom
+  osascript -e "tell application \"Google Chrome\" to set bounds of front window to {$1, $2, $3, $4}" >/dev/null
+}
+
+aero() { command -v aerospace >/dev/null 2>&1 && pgrep -x AeroSpace >/dev/null 2>&1; }
+
+chrome_wid() {   # aerospace's default --json omits app-bundle-id, so ask for it
+  aerospace list-windows --all --format '%{window-id}|%{app-bundle-id}' 2>/dev/null \
+    | awk -F'|' '$2=="com.google.Chrome"{print $1; exit}'
+}
+
+chrome_ws() {
+  aerospace list-windows --all --format '%{window-id}|%{workspace}' 2>/dev/null \
+    | awk -F'|' -v w="$1" '$1==w{print $2; exit}'
+}
+
+# AeroSpace parks windows of non-visible workspaces far off-screen, and re-tiles
+# any window it manages -- so make Chrome visible AND floating before resizing.
+prepare_chrome() {
+  aero || return 0
+  local wid ws
+  wid=$(chrome_wid); [ -n "$wid" ] || return 0
+  ws=$(chrome_ws "$wid")
+  [ -n "$ws" ] && [ "$ws" != "null" ] && aerospace workspace "$ws" >/dev/null 2>&1 || true
+  aerospace focus --window-id "$wid" >/dev/null 2>&1 || true
+  aerospace layout floating --window-id "$wid" >/dev/null 2>&1 || true
+  sleep 0.4
+}
+
+retile_chrome() {
+  aero || return 0
+  local wid; wid=$(chrome_wid); [ -n "$wid" ] || return 0
+  aerospace layout tiling --window-id "$wid" >/dev/null 2>&1 || true
+}
+
+js_error_hint() {
+  cat >&2 <<'HINT'
+
+Chrome will not run JavaScript from Apple Events, so uirec cannot measure the
+viewport. Turn it on once, from Chrome's menu bar:
+
+    View -> Developer -> Allow JavaScript from Apple Events
+
+It is a checkbox and takes effect immediately -- no restart. There is no
+`defaults write` equivalent; Chrome keeps this in its local-state prefs, so the
+menu item is the only way to set it.
+
+uirec only ever evaluates this, and nothing else:
+
+    JSON.stringify({sx:screenX, sy:screenY, ow:outerWidth,
+                    oh:outerHeight, iw:innerWidth, ih:innerHeight})
+
+If you would rather leave the setting off, put Chrome's toolbar height (run
+`outerHeight - innerHeight` in DevTools once) into UI_HEIGHT_HINT in
+~/.config/uirec/config.sh and uirec will trust that number instead.
+HINT
+}
+
+# Converge the window until innerWidth/innerHeight are exactly the target.
+# Returns: VP_X VP_Y (viewport top-left, screen points, top-left origin) + UI_H
+fit_viewport() {
+  local ui_h=$UI_HEIGHT_HINT side_w=0 off_x=0 off_y=0
+  local need_w need_h want_sx want_sy as_left as_top raw i
+  local sx sy ow oh iw ih
+
+  for i in 1 2 3 4 5; do
+    need_w=$(( VIEWPORT_W + side_w ))
+    need_h=$(( VIEWPORT_H + ui_h ))
+    want_sx=$(( (SCREEN_W - need_w) / 2 ))
+    want_sy=$(( MENUBAR_H + (USABLE_H - need_h) / 2 ))
+    [ "$want_sx" -lt 0 ] && want_sx=0
+    [ "$want_sy" -lt "$MENUBAR_H" ] && want_sy=$MENUBAR_H
+    as_left=$(( want_sx - off_x ))
+    as_top=$(( want_sy - off_y ))
+
+    chrome_set_bounds "$as_left" "$as_top" "$(( as_left + need_w ))" "$(( as_top + need_h ))"
+
+    raw=$(chrome_measure) || true
+    case "$raw" in
+      *"turned off"*|*"not allowed"*|*"AllowJavaScript"*) js_error_hint; exit 1 ;;
+      *uirec-no-window*) die "Chrome has no open window" ;;
+    esac
+    echo "$raw" | grep -q '^{' || { info "uirec: unexpected reply from Chrome: $raw"; js_error_hint; exit 1; }
+
+    eval "$(echo "$raw" | jq -r '"sx=\(.sx) sy=\(.sy) ow=\(.ow) oh=\(.oh) iw=\(.iw) ih=\(.ih)"')"
+
+    off_x=$(( sx - as_left )); off_y=$(( sy - as_top ))
+    side_w=$(( ow - iw ));     ui_h=$(( oh - ih ))
+
+    if [ "$iw" -eq "$VIEWPORT_W" ] && [ "$ih" -eq "$VIEWPORT_H" ]; then
+      VP_X=$(( sx + side_w / 2 )); VP_Y=$(( sy + ui_h )); UI_H=$ui_h
+      FIT_ITERS=$i; return 0
+    fi
+  done
+  die "could not size the viewport to ${VIEWPORT_W}x${VIEWPORT_H} (got ${iw}x${ih}).
+     The window may be constrained by the display: ${VIEWPORT_H} + ${ui_h}pt of Chrome UI
+     needs ${USABLE_H}pt of usable height, and this screen has $(( SCREEN_H - MENUBAR_H ))."
+}
+
+# --- subcommands -----------------------------------------------------------
+if [ "$CMD" = reset ]; then
+  retile_chrome
+  info "uirec: Chrome handed back to AeroSpace tiling."
+  exit 0
+fi
+
+if [ "$CMD" = cancel ]; then
+  if [ -f "$STATE_DIR/watcher.pid" ] && kill -0 "$(cat "$STATE_DIR/watcher.pid")" 2>/dev/null; then
+    kill "$(cat "$STATE_DIR/watcher.pid")" && rm -f "$STATE_DIR/watcher.pid"
+    info "uirec: stopped the watcher."
+  else
+    info "uirec: no watcher running."
+  fi
+  exit 0
+fi
+
+chrome_running || die "Google Chrome is not running"
+prepare_chrome
+osascript -e 'tell application "Google Chrome" to activate' >/dev/null
+sleep 0.4
+
+fit_viewport
+CS_X=$VP_X
+CS_Y=$(( SCREEN_H - VP_Y - VIEWPORT_H ))     # CleanShot's origin is bottom-left
+URL="cleanshot://record-screen?x=${CS_X}&y=${CS_Y}&width=${VIEWPORT_W}&height=${VIEWPORT_H}&display=${DISPLAY_INDEX}"
+
+if [ "$CMD" = doctor ]; then
+  printf 'screen        %sx%s pt, menubar %spt, usable %spt\n' "$SCREEN_W" "$SCREEN_H" "$MENUBAR_H" "$USABLE_H"
+  printf 'chrome UI     %spt tall (converged in %s pass(es))\n' "$UI_H" "$FIT_ITERS"
+  printf 'viewport      %sx%s at (%s,%s) top-left origin\n' "$VIEWPORT_W" "$VIEWPORT_H" "$VP_X" "$VP_Y"
+  printf 'cleanshot     x=%s y=%s (bottom-left origin)\n' "$CS_X" "$CS_Y"
+  printf 'url           %s\n' "$URL"
+  printf 'output        %sx%s @%sfps crf%s audio=%s -> %s\n' \
+    "$(( VIEWPORT_W * OUT_SCALE ))" "$(( VIEWPORT_H * OUT_SCALE ))" "$OUT_FPS" "$OUT_CRF" "$AUDIO" "$OUT_DIR"
+  for t in ffmpeg jq aerospace; do
+    printf '%-13s %s\n' "$t" "$(command -v $t || echo 'MISSING')"
+  done
+  if [ "$SHOT" = 1 ]; then
+    out="${TMPDIR:-/tmp}/uirec-doctor.png"
+    screencapture -x -R"${VP_X},${VP_Y},${VIEWPORT_W},${VIEWPORT_H}" "$out"
+    printf 'probe shot    %s\n' "$out"
+  fi
+  exit 0
+fi
+
+if [ "$DRY_RUN" = 1 ]; then
+  info "uirec: viewport ${VIEWPORT_W}x${VIEWPORT_H} at (${VP_X},${VP_Y}); chrome UI ${UI_H}pt"
+  info "uirec: would open $URL"
+  exit 0
+fi
+
+if [ "$NO_ENCODE" = 0 ]; then
+  mkdir -p "$STATE_DIR"
+  cat > "$STATE_DIR/pending.json" <<JSON
+{"label":"${LABEL}","out_dir":"${OUT_DIR}","fps":${OUT_FPS},"crf":${OUT_CRF},
+ "scale":${OUT_SCALE},"audio":"${AUDIO}","width":${VIEWPORT_W},"height":${VIEWPORT_H}}
+JSON
+  nohup uirec-encode --watch --timeout "$WATCH_TIMEOUT" \
+        >>"$STATE_DIR/encode.log" 2>&1 &
+  echo $! > "$STATE_DIR/watcher.pid"
+fi
+
+open "$URL"
+info "uirec: ${VIEWPORT_W}x${VIEWPORT_H} viewport armed — press Return in CleanShot to roll."
+[ "$NO_ENCODE" = 0 ] && info "uirec: will encode to ${OUT_DIR} when you stop."
+exit 0
