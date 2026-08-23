@@ -20,6 +20,11 @@ customCommands:
     context: "commits"
     description: "review commit with hunk"
     output: terminal
+  - key: "G"
+    command: "aicommit"
+    context: "files"
+    description: "draft commit message with Raycast AI"
+    output: log
 gui:
   sidePanelWidth: 0.2
 git:
