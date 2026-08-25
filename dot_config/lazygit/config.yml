@@ -23,7 +23,7 @@ customCommands:
   - key: "G"
     command: "aicommit"
     context: "files"
-    description: "draft commit message with Raycast AI"
+    description: "draft commit message with Claude"
     output: log
 gui:
   sidePanelWidth: 0.2

@@ -29,3 +29,8 @@
 # restores the directory on a new machine.
 .config/yazi/plugins
 .config/yazi/plugins/**
+
+# Per-machine commit conventions (scope vocabulary, ticket format, whatever the
+# local commit-msg hook enforces), layered over the shared commit-message.md by
+# aicommit. Same split as .gitconfig / .gitconfig.local.
+.config/prompts/commit-message.local.md

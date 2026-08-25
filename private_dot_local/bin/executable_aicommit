@@ -1,14 +1,69 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Draft a conventional-commit message for the staged diff and put it on the
+# clipboard.
+#
+# The model runs through headless Claude Code. --no-session-persistence is the
+# load-bearing flag: it writes no transcript, so `claude -c` in this repo still
+# resumes whatever you were actually working on. --tools "" means there is no
+# tool loop and so no permission prompt, and --setting-sources "" skips hooks
+# and settings that have nothing to say about commit messages. Together they
+# turn a full agent boot into a single-shot completion.
+#
+# sonnet, not haiku, despite this being a small job: measured over repeated runs
+# on the same diff, sonnet lands in ~8s and haiku in ~30s. Haiku spends far
+# longer generating the body, and its body was the weaker of the two. Override
+# per-invocation with AICOMMIT_MODEL if that ever stops being true.
 
-if ! git rev-parse --git-dir >/dev/null 2>&1; then
-  echo "aicommit: not a git repository" >&2
-  exit 1
+set -euo pipefail
+
+PROMPT_FILE="${AICOMMIT_PROMPT:-$HOME/.config/prompts/commit-message.md}"
+MODEL="${AICOMMIT_MODEL:-sonnet}"
+
+# Per-machine overlay, same shape as ~/.gitconfig.local: the base prompt holds
+# what is true of any repo, the overlay holds this machine's commit conventions
+# (scope vocabulary, ticket format, whatever the local hook enforces). chezmoi
+# manages the base and ignores the overlay, so a new machine gets the shared
+# rules and writes its own local ones.
+LOCAL_PROMPT="${PROMPT_FILE%.md}.local.md"
+
+die() { printf 'aicommit: %s\n' "$*" >&2; exit 1; }
+
+# The clipboard is the one genuinely unportable step, so it is the one thing
+# resolved at runtime rather than assumed.
+clipboard() {
+  if command -v pbcopy >/dev/null 2>&1; then pbcopy
+  elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then wl-copy
+  elif command -v xclip >/dev/null 2>&1; then xclip -selection clipboard
+  elif command -v xsel >/dev/null 2>&1; then xsel --clipboard --input
+  elif command -v clip.exe >/dev/null 2>&1; then clip.exe
+  else return 1
+  fi
+}
+
+git rev-parse --git-dir >/dev/null 2>&1 || die "not a git repository"
+if git diff --staged --quiet; then die "nothing staged"; fi
+command -v claude >/dev/null 2>&1 || die "claude not found on PATH"
+[ -r "$PROMPT_FILE" ] || die "prompt not readable: $PROMPT_FILE"
+
+system=$(cat "$PROMPT_FILE")
+if [ -r "$LOCAL_PROMPT" ]; then
+  system=$(printf '%s\n\n%s\n' "$system" "$(cat "$LOCAL_PROMPT")")
 fi
 
-if git diff --staged --quiet; then
-  echo "aicommit: nothing staged" >&2
-  exit 1
-fi
+message=$(git diff --staged | claude -p \
+  --no-session-persistence \
+  --tools "" \
+  --strict-mcp-config \
+  --setting-sources "" \
+  --model "$MODEL" \
+  --system-prompt "$system") || die "claude failed"
 
-git diff --staged | pbcopy
-open "raycast://extensions/raycast/ai/git-commit-message"
+[ -n "${message//[[:space:]]/}" ] || die "model returned nothing"
+
+printf '%s\n' "$message"
+if printf '%s\n' "$message" | clipboard; then
+  printf '\naicommit: copied to clipboard\n' >&2
+else
+  printf '\naicommit: no clipboard tool found; message printed above\n' >&2
+fi
