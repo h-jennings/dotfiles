@@ -83,3 +83,20 @@ vim.keymap.set("n", "<leader>w", function()
 	end
 	vim.api.nvim_echo({}, false, {})
 end, { noremap = true, silent = true, desc = "Resize mode" })
+
+-- herdr-annotate can only receive text through the system clipboard: its
+-- `plugin action invoke` CLI takes no context argument, so capture.ts falls
+-- back to reading the clipboard. Prepending file:line is the only way the
+-- agent learns where the snippet came from -- the exported Markdown records
+-- just the workspace/tab label, never a path.
+vim.keymap.set("x", "<leader>a", function()
+	vim.cmd('normal! "+y')
+	-- Read the marks after the yank; it exits visual mode and sets '< and '>.
+	local file = vim.fn.expand("%:.")
+	local text = vim.fn.getreg("+")
+	if file ~= "" then
+		text = string.format("%s:%d\n%s", file, vim.fn.line("'<"), text)
+	end
+	vim.fn.setreg("+", text)
+	vim.fn.jobstart({ "herdr", "plugin", "action", "invoke", "annotate.capture" })
+end, { noremap = true, silent = true, desc = "Annotate in Herdr" })
