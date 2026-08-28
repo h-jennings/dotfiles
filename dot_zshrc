@@ -19,6 +19,10 @@ alias v="nvim"
 
 # tools
 eval "$(mise activate zsh)"
+# mise shims as a PATH fallback: `mise activate` injects version-pinned install
+# dirs, which go stale for long-lived processes (the Herdr server spawns `bun`
+# for the annotate plugin). Appended, so activate still wins in this shell.
+export PATH="$PATH:$HOME/.local/share/mise/shims"
 . "$HOME/.atuin/bin/env"
 eval "$(atuin init zsh)"
 

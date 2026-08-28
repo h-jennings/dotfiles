@@ -33,12 +33,12 @@ git:
   # on; the toast names the one you land on. The layout word is an argument to
   # the wrapper, which is also what auto-detects light/dark.
   pagers:
-    - name: side-by-side
-      colorArg: always
-      pager: ~/.config/lazygit/delta-auto.sh side-by-side
     - name: stacked
       colorArg: always
       pager: ~/.config/lazygit/delta-auto.sh stacked
+    - name: side-by-side
+      colorArg: always
+      pager: ~/.config/lazygit/delta-auto.sh side-by-side
     # Uncomment and move to the top of the list to have the layout follow the
     # window instead: side-by-side at >=160 columns, stacked below that. `|`
     # still cycles past it to force either layout by hand.
