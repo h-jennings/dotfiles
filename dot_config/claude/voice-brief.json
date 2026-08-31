@@ -1,0 +1,12 @@
+{
+  "voice": "Brian",
+  "model_id": "eleven_turbo_v2_5",
+  "output_format": "mp3_44100_128",
+  "speed": 1.0,
+  "stability": 0.5,
+  "output_dir": "~/.cache/claude/voice-brief",
+  "dialogue_voices": {
+    "Host": "Brian",
+    "Guest": "Alice"
+  }
+}
