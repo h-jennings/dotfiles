@@ -221,16 +221,25 @@ return {
 	-- ─────────────────────────────────────────────────────────────────────
 	--
 	-- FZF SEARCH SYNTAX (use during interactive search):
-	--   Inline filtering examples:
-	--     file:lua$ searchterm    - Filter by filename ending in 'lua', then search
-	--     searchterm -- -g=*.lua  - Add ripgrep glob option interactively
+	--   Filtering grep results by file (like you do in `gA`):
+	--     While live, everything typed goes to ripgrep, so `file:` does NOT
+	--     work there. Type the search, then <ctrl-g>: that freezes the results
+	--     and the input becomes the same fuzzy filter as `gA` —
+	--       file:lua$   keep only files ending in lua
+	--       !test       drop anything matching "test"
+	--       'exact      exact substring
+	--     <ctrl-g> again goes back to editing the search itself.
+	--
+	--   Or narrow at the ripgrep level while still live:
+	--     searchterm -- -g=*.lua   - pass a glob to rg
+	--     searchterm -- -g=!*.test.ts
 	--
 	--   Built-in toggles:
 	--     <alt-h> - toggle hidden files
 	--     <alt-i> - toggle ignored files
 	--     <alt-f> - toggle follow symlinks
 	--     <alt-r> - toggle regex mode
-	--     <ctrl-g> - toggle live mode
+	--     <ctrl-g> - toggle live mode (live search <-> filter results)
 	--
 	--   Making results persist (nothing is selected => acts on ALL results):
 	--     <ctrl-q> - send to quickfix; quicker.nvim makes it editable, so you

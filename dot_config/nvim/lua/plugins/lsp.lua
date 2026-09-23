@@ -426,6 +426,20 @@ return {
 				end,
 			})
 
+			-- cssmodules_ls takes the nearest package.json as its root, so in this
+			-- workspace every package you open a file in starts another copy of the
+			-- server, and they all stay running. Pin it to the workspace root so one
+			-- server covers everything.
+			vim.lsp.config("cssmodules_ls", {
+				root_dir = function(bufnr, on_dir)
+					local fname = vim.api.nvim_buf_get_name(bufnr)
+					local found = vim.fs.find({ "pnpm-workspace.yaml", ".git" }, { path = fname, upward = true })[1]
+					if found then
+						on_dir(vim.fs.dirname(found))
+					end
+				end,
+			})
+
 			-- Enable LSP servers
 			vim.lsp.enable("vtsls")
 			vim.lsp.enable("cssls")
