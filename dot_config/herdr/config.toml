@@ -90,8 +90,9 @@ split_vertical = ["prefix+v", "prefix+|"]
 # NOT PORTED (no direct herdr equivalent):
 #   * copy-mode-vi keytable (v / y / V / rectangle / A / D) — herdr selection is
 #     not a rebindable vi table; see copy_on_select above + `edit_scrollback`.
-#   * select-layout even-vertical/horizontal (bind v / bind b) — herdr has no
-#     "apply layout" action; use splits instead. (prefix+b = toggle_sidebar.)
+#   * select-layout even-vertical/horizontal (bind v / bind b) — no built-in
+#     action; prefix+= runs scripts/equalize-panes.py instead (see bottom).
+#     (prefix+b = toggle_sidebar.)
 #   * Alt+arrow pane resize — use modal resize_mode (prefix+shift+r) instead.
 #   * paste-buffer / choose-buffer (C-p / P) — no paste-buffer stack.
 #   * lazygit binding (bind g / G) — intentionally skipped. Add later with a
@@ -120,3 +121,10 @@ key = "prefix+m"
 type = "plugin_action"
 command = "annotate.manage"
 description = "manage annotations"
+
+# tmux `select-layout -E`: make every pane in the current tab the same size.
+[[keys.command]]
+key = "prefix+="
+type = "shell"
+command = "python3 ~/.config/herdr/scripts/equalize-panes.py"
+description = "equalize pane sizes"
