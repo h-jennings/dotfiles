@@ -1,0 +1,27 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+set -eu
+
+# Install Plannotator via its official installer (-> ~/.local/bin/plannotator,
+# plus the plannotator-* skills in ~/.claude/skills). The Claude Code plan-mode
+# hook comes from the marketplace plugin and stays a manual step:
+#   /plugin marketplace add backnotprop/plannotator
+#   /plugin install plannotator@plannotator
+if [ ! -x "$HOME/.local/bin/plannotator" ]; then
+	echo "==> Installing Plannotator..."
+	curl -fsSL https://plannotator.ai/install.sh | bash
+else
+	echo "==> Plannotator already installed. Skipping."
+fi
+
+# herdr annotate plugin (bundles plannotator-tui). Backs the prefix+a/m/o
+# bindings in ~/.config/herdr/config.toml.
+if ! command -v herdr >/dev/null 2>&1; then
+	echo "==> herdr not found. Skipping annotate plugin."
+elif herdr plugin list 2>/dev/null | grep -q '^- annotate '; then
+	echo "==> herdr annotate plugin already installed. Skipping."
+else
+	echo "==> Installing herdr annotate plugin..."
+	herdr plugin install plannotator/herdr-annotate --yes
+fi
+{{- end }}
