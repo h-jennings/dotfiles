@@ -39,7 +39,7 @@ agent_panel_sort = "priority"
 show_agent_labels_on_pane_borders = true
 
 # Show an in-app toast when a backgrounded agent changes state (done / needs
-# attention) so you notice there's a prefix+o target waiting.
+# attention) so you notice an agent is waiting.
 [ui.toast]
 delivery = "herdr"
 
@@ -121,6 +121,20 @@ key = "prefix+m"
 type = "plugin_action"
 command = "annotate.manage"
 description = "manage annotations"
+
+# Document review (plannotator-tui, bundled with the annotate plugin).
+# Overrides herdr's default prefix+o (open_notification_target).
+[[keys.command]]
+key = "prefix+o"
+type = "plugin_action"
+command = "annotate.open"
+description = "review documents in this folder"
+
+[[keys.command]]
+key = "prefix+shift+o"
+type = "plugin_action"
+command = "annotate.last"
+description = "review the agent's last reply"
 
 # tmux `select-layout -E`: make every pane in the current tab the same size.
 [[keys.command]]
