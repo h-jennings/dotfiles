@@ -149,7 +149,8 @@ return {
 						end, "Reload TS projects")
 
 						-- "Who imports this file?" — the whole-file counterpart to
-						-- `gA`. A Vue SFC's default export has no symbol to put the
+						-- `gA`. `<leader>cp` (import-tree) is this, repeated
+						-- upward as a tree. A Vue SFC's default export has no symbol to put the
 						-- cursor on, so symbol-based references can't answer it.
 						-- This is the same command VS Code's "Find File References"
 						-- runs, and vtsls attaches to `vue` buffers, so it works in
