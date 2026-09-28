@@ -24,6 +24,12 @@ require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
 	},
+	-- Plugins marked `dev = true` load from this directory when a checkout
+	-- exists there, and fall back to their GitHub repo otherwise.
+	dev = {
+		path = "~/repos/personal",
+		fallback = true,
+	},
 	checker = {
 		enabled = false,
 	},
