@@ -25,5 +25,5 @@
   "snacks.nvim": { "branch": "main", "commit": "882c996cf28183f4d63640de0b4c02ec886d01f2" },
   "trouble.nvim": { "branch": "main", "commit": "bd67efe408d4816e25e8491cc5ad4088e708a69a" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" },
-  "yazi.nvim": { "branch": "main", "commit": "91d9a639963983a20e5fbca98dafc3afa72787f5" }
+  "yazi.nvim": { "branch": "main", "commit": "969ef006fb8b6d3c1384eb6755c6d7060100837a" }
 }
