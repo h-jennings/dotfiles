@@ -461,24 +461,30 @@ return {
 		opts = {
 			keymap = {
 				preset = "default",
+				-- The preset uses `fallback_to_mappings` here, which skips Vim's
+				-- built-in keyword completion when the menu is closed.
 				["<C-p>"] = { "select_prev", "fallback" },
 				["<C-n>"] = { "select_next", "fallback" },
-				["<C-y>"] = { "select_and_accept" },
-				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
 				["<Tab>"] = { "select_next", "fallback" },
 				["<S-Tab>"] = { "select_prev", "fallback" },
 				["<CR>"] = { "accept", "fallback" },
 			},
 			completion = {
+				-- Copilot owns inline ghost text; the menu only opens on <C-Space>.
+				-- blink's own ghost text would draw over Copilot's at the cursor.
 				menu = {
-					auto_show = true,
+					auto_show = false,
 				},
 				ghost_text = {
 					enabled = false,
 				},
 			},
+			-- <C-k> in insert mode toggles it (preset).
+			signature = {
+				enabled = true,
+			},
 			sources = {
-				default = { "lsp" },
+				default = { "lsp", "path" },
 				providers = {
 					lsp = {
 						opts = {
