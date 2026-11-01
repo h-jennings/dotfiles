@@ -1,0 +1,91 @@
+#!/bin/bash
+# Read-only review of recent Claude Code sessions. Writes a report to
+# ~/.claude/dreams/. Claude gets no write, shell or network tools.
+set -euo pipefail
+umask 077
+
+dreams="$HOME/.claude/dreams"
+marker="$dreams/.last-run"
+digests="$dreams/.digests"
+lock="$dreams/.lock"
+started="$dreams/.started"
+mkdir -p "$dreams"
+mkdir "$lock" 2>/dev/null || { echo "dream already running" >&2; exit 0; }
+trap 'rm -rf "$lock" "$digests" "$started"' EXIT
+rm -rf "$digests"; mkdir "$digests"
+
+now=$(date +%s)
+touch "$started"
+if [ -f "$marker" ]; then
+  since=$(stat -f %m "$marker")
+  newer=(-newer "$marker")
+else
+  since=$((now - 7 * 86400))
+  newer=(-mtime -7)
+fi
+
+read -r -d '' digest_jq <<'JQ' || true
+def clip($n): if length > $n then .[:$n] + " …[clipped]" else . end;
+select((.type == "user" or .type == "assistant")
+       and (.isSidechain | not) and (.isMeta | not))
+| .type as $who
+| .message.content
+| if type == "string" then "\n[\($who)] \(clip(2000))"
+  else .[]
+    | if .type == "text" then "\n[\($who)] \(.text | clip(2000))"
+      elif .type == "tool_use" then "[tool] \(.name) \(.input | tojson | clip(200))"
+      elif .type == "tool_result" and .is_error == true
+        then "[tool error] \(.content | if type == "string" then . else tojson end | clip(500))"
+      else empty end
+  end
+JQ
+
+count=0
+while IFS= read -r file; do
+  id=$(basename "$file" .jsonl)
+  cwd=$(jq -rn 'first(inputs | select(.cwd) | .cwd)' "$file" 2>/dev/null || true)
+  body=$(jq -r "$digest_jq" "$file" 2>/dev/null || true)
+  grep -q '^\[user\]' <<<"$body" || continue
+  printf 'Project: %s\nSession: %s\n%s\n' "$cwd" "$id" "$body" > "$digests/$id.md"
+  count=$((count + 1))
+done < <(find "$HOME/.claude/projects" -maxdepth 2 -name '*.jsonl' "${newer[@]}")
+
+day=$(date +%F)
+report="$dreams/$day.md"
+since_iso=$(date -r "$since" +%FT%T%z)
+now_iso=$(date -r "$now" +%FT%T%z)
+
+if [ "$count" -eq 0 ]; then
+  printf '# Dream %s\n\nSummary: Nothing new to review.\n\nWindow: %s → %s · sessions reviewed: 0\n' \
+    "$day" "$since_iso" "$now_iso" > "$report"
+  mv "$started" "$marker"
+  echo "$report"
+  exit 0
+fi
+
+prompt=$(<"$HOME/.claude/dream/prompt.md")
+prompt=${prompt//\{\{SINCE_ISO\}\}/$since_iso}
+prompt=${prompt//\{\{NOW_ISO\}\}/$now_iso}
+prompt=${prompt//\{\{DATE\}\}/$day}
+prompt=${prompt//\{\{DIGEST_DIR\}\}/$digests}
+prompt=${prompt//\{\{DREAMS_DIR\}\}/$dreams}
+prompt=${prompt//\{\{SESSION_COUNT\}\}/$count}
+
+out=$(mktemp "$dreams/.out.XXXXXX")
+cd "$dreams"
+claude -p "$prompt" \
+  --tools "Read,Glob,Grep" \
+  --allowedTools "Read,Glob,Grep" \
+  --permission-mode dontAsk \
+  --add-dir "$HOME" \
+  --no-session-persistence \
+  --max-budget-usd 10 \
+  < /dev/null > "$out"
+
+if ! head -1 "$out" | grep -q '^# Dream '; then
+  echo "dream produced no report, see $out" >&2
+  exit 1
+fi
+mv "$out" "$report"
+mv "$started" "$marker"
+echo "$report"
