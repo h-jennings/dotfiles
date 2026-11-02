@@ -78,6 +78,7 @@ claude -p "$prompt" \
   --allowedTools "Read,Glob,Grep" \
   --permission-mode dontAsk \
   --add-dir "$HOME" \
+  --strict-mcp-config \
   --no-session-persistence \
   --max-budget-usd 10 \
   < /dev/null > "$out"
