@@ -86,6 +86,10 @@ rename_workspace = ["prefix+shift+w", "prefix+$"]
 # Add `|` (side-by-side) as an alternate to split_vertical, alongside prefix+v.
 split_vertical = ["prefix+v", "prefix+|"]
 
+# Jump to the agent that sent the most recent toast. herdr's default is
+# prefix+o, but that key is taken by annotate.open below.
+open_notification_target = "prefix+i"
+
 # ----------------------------------------------------------------------------
 # NOT PORTED (no direct herdr equivalent):
 #   * copy-mode-vi keytable (v / y / V / rectangle / A / D) — herdr selection is
@@ -123,7 +127,7 @@ command = "annotate.manage"
 description = "manage annotations"
 
 # Document review (plannotator-tui, bundled with the annotate plugin).
-# Overrides herdr's default prefix+o (open_notification_target).
+# Overrides herdr's default prefix+o (open_notification_target, moved to prefix+i).
 [[keys.command]]
 key = "prefix+o"
 type = "plugin_action"
@@ -135,6 +139,19 @@ key = "prefix+shift+o"
 type = "plugin_action"
 command = "annotate.last"
 description = "review the agent's last reply"
+
+[[keys.command]]
+key = "prefix+ctrl+o"
+type = "plugin_action"
+command = "annotate.last-newest"
+description = "review the agent's newest reply"
+
+# README suggests prefix+ctrl+s, but that's a workspace_picker alias here.
+[[keys.command]]
+key = "prefix+shift+e"
+type = "plugin_action"
+command = "annotate.send-archive"
+description = "send annotations to the agent and archive them"
 
 # tmux `select-layout -E`: make every pane in the current tab the same size.
 [[keys.command]]

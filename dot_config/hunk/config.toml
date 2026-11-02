@@ -1,6 +1,11 @@
-theme = "github-dark-default"
-mode = "auto"
+theme = "github-light-default"
+mode = "unified"
 vcs = "git"
 watch = false
 line_numbers = true
 wrap_lines = false
+hunk_headers = true
+menu_bar = true
+agent_notes = false
+copy_decorations = false
+cursor_line = "row"
