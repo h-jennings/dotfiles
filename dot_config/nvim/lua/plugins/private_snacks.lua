@@ -216,8 +216,6 @@ return {
 	--
 	--   Everything below is a variant. The `<leader>g{p,b}` maps are only
 	--   shortcuts for what the inline syntax already does from inside `g/`.
-	--   To grep a directory you have to pick, use `<leader>e` (yazi) to
-	--   navigate there and hit `<c-s>` — no path typing.
 	-- ─────────────────────────────────────────────────────────────────────
 	--
 	-- FZF SEARCH SYNTAX (use during interactive search):
