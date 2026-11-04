@@ -63,7 +63,8 @@ vim.opt.cmdheight = 1
 vim.opt.backspace = "indent,eol,start"
 
 -- Fold settings
-vim.opt.foldmethod = "indent"
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
 vim.opt.foldenable = true
 
@@ -76,3 +77,10 @@ vim.opt.mouse = "a"
 -- Performance
 vim.opt.lazyredraw = false
 vim.opt.timeoutlen = 300
+vim.opt.ttimeoutlen = 0
+
+-- Floats
+vim.o.winborder = "rounded"
+
+-- Diff
+vim.opt.fillchars:append({ diff = "╱" })

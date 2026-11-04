@@ -100,3 +100,41 @@ vim.keymap.set("x", "<leader>a", function()
 	vim.fn.setreg("+", text)
 	vim.fn.jobstart({ "herdr", "plugin", "action", "invoke", "annotate.capture" })
 end, { noremap = true, silent = true, desc = "Annotate in Herdr" })
+
+vim.keymap.set("n", "ZR", "<cmd>silent! wa | restart<cr>", { desc = "Save all and restart Neovim" })
+
+local function file_ref(absolute, first, last)
+	local path = vim.fn.expand(absolute and "%:p" or "%:.")
+	local range = first == last and ("#L" .. first) or string.format("#L%d-%d", first, last)
+	return "@" .. path .. range
+end
+
+local function visual_range()
+	local a, b = vim.fn.line("v"), vim.fn.line(".")
+	return math.min(a, b), math.max(a, b)
+end
+
+local function copy(text)
+	vim.fn.setreg("+", text)
+	vim.notify("Copied " .. vim.split(text, "\n")[1])
+end
+
+vim.keymap.set("n", "<leader>yf", function()
+	local line = vim.fn.line(".")
+	copy(file_ref(false, line, line))
+end, { desc = "Copy @file#Lline" })
+vim.keymap.set("x", "<leader>yf", function()
+	copy(file_ref(false, visual_range()))
+end, { desc = "Copy @file#Lstart-end" })
+vim.keymap.set("n", "<leader>yp", function()
+	local line = vim.fn.line(".")
+	copy(file_ref(true, line, line))
+end, { desc = "Copy @abs-file#Lline" })
+
+vim.keymap.set("x", "<leader>yc", function()
+	local first, last = visual_range()
+	local lines = vim.api.nvim_buf_get_lines(0, first - 1, last, false)
+	local ref = file_ref(false, first, last)
+	copy(ref .. "\n```" .. vim.bo.filetype .. "\n" .. table.concat(lines, "\n") .. "\n```")
+	vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "n", false)
+end, { desc = "Copy selection as code block" })

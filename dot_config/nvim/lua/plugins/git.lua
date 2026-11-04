@@ -10,7 +10,6 @@ return {
 				delay = 1000,
 			},
 			preview_config = {
-				border = "rounded",
 				style = "minimal",
 			},
 			on_attach = function(bufnr)
@@ -84,6 +83,16 @@ return {
 
 				-- Toggles
 				map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "Toggle Line Blame" })
+				map("n", "<leader>tB", function()
+					vim.g.gitsigns_base_head = not vim.g.gitsigns_base_head
+					if vim.g.gitsigns_base_head then
+						gs.change_base("HEAD", true)
+						vim.notify("Gitsigns: comparing against HEAD (staged changes visible)")
+					else
+						gs.reset_base(true)
+						vim.notify("Gitsigns: comparing against index")
+					end
+				end, { desc = "Toggle diff base HEAD / index" })
 				-- Was `toggle_deleted`, now deprecated in favour of this: rather
 				-- than globally showing every deleted line, it renders the hunk
 				-- under the cursor inline, deletions included.
