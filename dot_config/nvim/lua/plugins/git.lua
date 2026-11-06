@@ -1,5 +1,34 @@
 return {
 	{
+		"esmuellert/codediff.nvim",
+		cmd = "CodeDiff",
+		keys = {
+			{
+				"<leader>gd",
+				function()
+					local base = vim.fn.systemlist("git symbolic-ref --short refs/remotes/origin/HEAD")[1]
+					if vim.v.shell_error ~= 0 then
+						base = nil
+						for _, b in ipairs({ "develop", "main", "master" }) do
+							vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", b })
+							if vim.v.shell_error == 0 then
+								base = b
+								break
+							end
+						end
+					end
+					if not base then
+						return vim.notify("CodeDiff: no base branch found", vim.log.levels.WARN)
+					end
+					vim.cmd("CodeDiff " .. base .. "...")
+				end,
+				desc = "Diff stack vs default branch (CodeDiff)",
+			},
+			{ "<leader>gD", ":CodeDiff ", desc = "CodeDiff against…" },
+		},
+		opts = {},
+	},
+	{
 		"lewis6991/gitsigns.nvim",
 		event = { "BufReadPre", "BufNewFile" },
 		opts = {
