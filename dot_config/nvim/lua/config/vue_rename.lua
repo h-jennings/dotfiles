@@ -41,12 +41,6 @@ function M.update_imports(src, dest)
 			changes[vim.uri_from_fname(file.fileName)] = edits
 		end
 		vim.lsp.util.apply_workspace_edit({ changes = changes }, "utf-16")
-		-- Same as oil's `autosave_changes`.
-		for uri in pairs(changes) do
-			vim.api.nvim_buf_call(vim.uri_to_bufnr(uri), function()
-				vim.cmd.update({ mods = { emsg_silent = true, noautocmd = true } })
-			end)
-		end
 		vim.notify(("Updated imports in %d file(s)"):format(vim.tbl_count(changes)))
 	end)
 end
