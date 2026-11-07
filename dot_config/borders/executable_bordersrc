@@ -1,0 +1,11 @@
+#!/bin/bash
+# JankyBorders, run via `brew services start borders`.
+# nushu amber: readable on both the light and dark variants.
+options=(
+  style=round
+  width=2.5
+  hidpi=on
+  active_color=0xd0c99b3e
+  inactive_color=0x00000000
+)
+borders "${options[@]}"
