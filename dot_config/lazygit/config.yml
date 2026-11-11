@@ -15,11 +15,6 @@ customCommands:
   - key: "F"
     command: "git fetch origin -p"
     context: "localBranches"
-  - key: "H"
-    command: "hunk show {{.SelectedLocalCommit.Hash}}"
-    context: "commits"
-    description: "review commit with hunk"
-    output: terminal
   - key: "G"
     command: "aicommit"
     context: "files"

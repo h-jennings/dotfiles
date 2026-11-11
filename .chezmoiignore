@@ -16,9 +16,6 @@
 # Claude Code's own convention for per-machine settings.
 **/settings.local.json
 
-# Symlink into /opt/homebrew; dangles wherever hunk isn't installed.
-.claude/skills/hunk-review
-
 # Leader Key rewrites its own config, and the app bindings differ per machine.
 .config/leader_key/config.json
 
