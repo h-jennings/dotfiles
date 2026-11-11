@@ -159,3 +159,28 @@ key = "prefix+="
 type = "shell"
 command = "python3 ~/.config/herdr/scripts/equalize-panes.py"
 description = "equalize pane sizes"
+
+# Swap the focused pane with its neighbour (no built-in action; uses the CLI).
+[[keys.command]]
+key = "prefix+shift+h"
+type = "shell"
+command = "herdr pane swap --direction left"
+description = "swap pane left"
+
+[[keys.command]]
+key = "prefix+shift+j"
+type = "shell"
+command = "herdr pane swap --direction down"
+description = "swap pane down"
+
+[[keys.command]]
+key = "prefix+shift+k"
+type = "shell"
+command = "herdr pane swap --direction up"
+description = "swap pane up"
+
+[[keys.command]]
+key = "prefix+shift+l"
+type = "shell"
+command = "herdr pane swap --direction right"
+description = "swap pane right"
