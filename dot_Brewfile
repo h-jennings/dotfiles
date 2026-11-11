@@ -1,4 +1,3 @@
-tap "modem-dev/tap"
 tap "nikitabobko/tap"
 tap "yqrashawn/goku"
 brew "chezmoi"
