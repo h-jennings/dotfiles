@@ -201,6 +201,7 @@ return {
 					hidden = true,
 					exclude = exclude,
 				},
+				explorer = { hidden = true },
 				lsp_symbols = { filter = symbol_filter },
 				lsp_workspace_symbols = { filter = symbol_filter },
 			},
@@ -288,6 +289,13 @@ return {
 				require("snacks").picker.keymaps()
 			end,
 			desc = "Search keymaps",
+		},
+		{
+			"<leader>e",
+			function()
+				require("snacks").explorer()
+			end,
+			desc = "File tree",
 		},
 		{
 			"<leader>o",
