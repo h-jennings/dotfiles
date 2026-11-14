@@ -473,7 +473,7 @@ return {
 				-- Copilot owns inline ghost text; the menu only opens on <C-Space>.
 				-- blink's own ghost text would draw over Copilot's at the cursor.
 				menu = {
-					auto_show = false,
+					auto_show = true,
 				},
 				ghost_text = {
 					enabled = false,
