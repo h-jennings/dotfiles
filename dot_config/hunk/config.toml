@@ -1,0 +1,8 @@
+# Fallback for hand-run `hunk`; the Herdr keys pass --theme nushu-dark/light by appearance.
+theme = "terminal"
+mode = "split"
+agent_notes = true
+prompt_save_view_preferences = false
+
+[extensions]
+paths = ["~/.local/share/nvim/lazy/nushu.nvim/extras/hunk/nushu"]

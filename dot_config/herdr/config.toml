@@ -153,6 +153,19 @@ type = "plugin_action"
 command = "annotate.send-archive"
 description = "send annotations to the agent and archive them"
 
+[[keys.command]]
+key = "prefix+d"
+type = "pane"
+command = "~/.config/herdr/scripts/hunk.sh diff"
+description = "review working tree in Hunk"
+
+# prefix+shift+d is close_workspace, so the stack review sits on ctrl.
+[[keys.command]]
+key = "prefix+ctrl+d"
+type = "pane"
+command = "b=$(git merge-base origin/HEAD HEAD 2>/dev/null || git merge-base develop HEAD 2>/dev/null || git merge-base main HEAD) && exec ~/.config/herdr/scripts/hunk.sh diff \"$b\""
+description = "review stack vs default branch in Hunk"
+
 # tmux `select-layout -E`: make every pane in the current tab the same size.
 [[keys.command]]
 key = "prefix+="

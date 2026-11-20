@@ -1,0 +1,19 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+set -eu
+
+# Hunk extensions installed through Hunk's own manager (~/.config/hunk/extensions/installed).
+if ! command -v hunk >/dev/null 2>&1; then
+	echo "==> hunk not found. Skipping Hunk extensions."
+	exit 0
+fi
+
+for extension in modem-dev/hunk-lens; do
+	if hunk extension list 2>/dev/null | grep -q "^${extension##*/} "; then
+		echo "==> Hunk extension ${extension##*/} already installed. Skipping."
+	else
+		echo "==> Installing Hunk extension ${extension}..."
+		hunk extension install "$extension" --yes
+	fi
+done
+{{- end }}
