@@ -160,6 +160,15 @@ type = "shell"
 command = "python3 ~/.config/herdr/scripts/equalize-panes.py"
 description = "equalize pane sizes"
 
+# Named layouts live in ~/.config/herdr/layouts/<name>.json.
+[[keys.command]]
+key = "prefix+ctrl+l"
+type = "popup"
+command = "python3 ~/.config/herdr/scripts/layout.py pick"
+width = 40
+height = 12
+description = "open a named layout in a new tab"
+
 # Swap the focused pane with its neighbour (no built-in action; uses the CLI).
 [[keys.command]]
 key = "prefix+shift+h"
