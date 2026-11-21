@@ -6,6 +6,7 @@
   "copilot.vim": { "branch": "release", "commit": "a12fd5672110c8aa7e3c8419e28c96943ca179be" },
   "gitportal.nvim": { "branch": "main", "commit": "0c3e1c1d518c9e42e61e8df35ea0c0582a278a65" },
   "gitsigns.nvim": { "branch": "main", "commit": "ef707fb93301a9b856f36eae4c8f56f5b988a794" },
+  "import-tree.nvim": { "branch": "main", "commit": "34667cbc501f473233cd4aa0dc7ec9e26e3a8bb7" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
   "lualine.nvim": { "branch": "master", "commit": "221ce6b2d999187044529f49da6554a92f740a96" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "55eceab8975036ac43a4176cbfe0d4bf1ddae93f" },
