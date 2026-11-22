@@ -1,4 +1,4 @@
-# Fallback for hand-run `hunk`; the Herdr keys pass --theme nushu-dark/light by appearance.
+# Fallback when nothing passes --theme; the zsh `hunk` function and the Herdr keys pass nushu-dark/light by appearance.
 theme = "terminal"
 mode = "split"
 agent_notes = true

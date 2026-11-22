@@ -13,6 +13,18 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+# hunk with the nushu theme matching system appearance
+function hunk() {
+	case "$1" in
+		open|diff|show|log|gh|patch|stash)
+			if (( ! ${@[(I)--theme*]} )); then
+				~/.config/herdr/scripts/hunk.sh "$@"
+				return
+			fi ;;
+	esac
+	command hunk "$@"
+}
+
 # aliases
 alias lg="lazygit"
 alias v="nvim"
