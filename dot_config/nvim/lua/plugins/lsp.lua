@@ -136,47 +136,6 @@ return {
 					-- No `:LspRestart` on 0.12 — lspconfig bails when builtin `:lsp` exists.
 					map("n", "<leader>lr", "<cmd>lsp restart<cr>", "Restart LSP")
 
-					if client and client.name == "vtsls" then
-						-- Restarts tsserver inside vtsls, so the client stays attached and
-						-- `<leader>lr`'s detach/reattach of every other server is avoided.
-						map("n", "<leader>lt", function()
-							client:exec_cmd({ command = "typescript.restartTsServer" }, { bufnr = bufnr })
-						end, "Restart tsserver")
-
-						-- For stale tsconfig/node_modules after a branch switch or install.
-						map("n", "<leader>lp", function()
-							client:exec_cmd({ command = "typescript.reloadProjects" }, { bufnr = bufnr })
-						end, "Reload TS projects")
-
-						-- "Who imports this file?" — the whole-file counterpart to
-						-- `gA`. `<leader>cp` (import-tree) is this, repeated
-						-- upward as a tree. A Vue SFC's default export has no symbol to put the
-						-- cursor on, so symbol-based references can't answer it.
-						-- This is the same command VS Code's "Find File References"
-						-- runs, and vtsls attaches to `vue` buffers, so it works in
-						-- SFCs as well as plain TS.
-						map("n", "gF", function()
-							client:exec_cmd({
-								command = "typescript.findAllFileReferences",
-								arguments = { vim.uri_from_bufnr(bufnr) },
-							}, { bufnr = bufnr }, function(err, result)
-								if err then
-									vim.notify("File references: " .. err.message, vim.log.levels.ERROR)
-									return
-								end
-								if not result or vim.tbl_isempty(result) then
-									vim.notify("No file references found", vim.log.levels.WARN)
-									return
-								end
-								vim.fn.setqflist({}, " ", {
-									title = "File references: " .. vim.fn.expand("%:t"),
-									items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
-								})
-								require("snacks").picker.qflist()
-							end)
-						end, "File references (who imports this file)")
-					end
-
 					-- Vue hybrid mode puts two inlay-hint providers on one buffer,
 					-- but nvim tracks a single document version for all of them:
 					-- whichever answers second makes the other's columns stale, and
@@ -320,8 +279,70 @@ return {
 				"mason/packages/vue-language-server/node_modules/@vue/language-server"
 			)
 
+			-- TypeScript 7+ has no tsserver for vtsls to load, so those projects use `tsc --lsp`.
+			local native_tsc_bins = {}
+			local function native_tsc_root(bufnr)
+				if vim.bo[bufnr].filetype == "vue" then
+					return
+				end
+				local pkg = vim.fs.find("node_modules/typescript/package.json", {
+					path = vim.api.nvim_buf_get_name(bufnr),
+					upward = true,
+				})[1]
+				if not pkg then
+					return
+				end
+				local ok, manifest = pcall(function()
+					return vim.json.decode(table.concat(vim.fn.readfile(pkg), "\n"))
+				end)
+				local version = ok and vim.version.parse(manifest.version or "")
+				local bin = vim.fs.joinpath(vim.fs.dirname(vim.fs.dirname(pkg)), ".bin/tsc")
+				if not version or version.major < 7 or vim.fn.executable(bin) ~= 1 then
+					return
+				end
+				local root = vim.fs.root(
+					bufnr,
+					{ "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock" }
+				) or vim.fs.dirname(vim.fs.dirname(vim.fs.dirname(pkg)))
+				native_tsc_bins[root] = bin
+				return root
+			end
+
+			vim.lsp.config("tsc", {
+				cmd = function(dispatchers, config)
+					return vim.lsp.rpc.start({ native_tsc_bins[config.root_dir], "--lsp", "--stdio" }, dispatchers)
+				end,
+				root_dir = function(bufnr, on_dir)
+					local root = native_tsc_root(bufnr)
+					if root then
+						on_dir(root)
+					end
+				end,
+				settings = {
+					["js/ts"] = {
+						inlayHints = {
+							parameterNames = { enabled = "none" },
+							parameterTypes = { enabled = false },
+							variableTypes = { enabled = false },
+							propertyDeclarationTypes = { enabled = false },
+							functionLikeReturnTypes = { enabled = true },
+							enumMemberValues = { enabled = false },
+						},
+						referencesCodeLens = { enabled = false },
+						implementationsCodeLens = { enabled = false },
+					},
+				},
+			})
+
+			local vtsls_root_dir = vim.lsp.config.vtsls.root_dir
+
 			-- Configure LSP servers
 			vim.lsp.config("vtsls", {
+				root_dir = function(bufnr, on_dir)
+					if not native_tsc_root(bufnr) then
+						vtsls_root_dir(bufnr, on_dir)
+					end
+				end,
 				-- lspconfig's defaults plus `vue`. Setting this replaces the
 				-- default list rather than extending it, so the others are
 				-- repeated here deliberately.
@@ -443,6 +464,7 @@ return {
 
 			-- Enable LSP servers
 			vim.lsp.enable("vtsls")
+			vim.lsp.enable("tsc")
 			vim.lsp.enable("cssls")
 			vim.lsp.enable("cssmodules_ls")
 			vim.lsp.enable("lua_ls")
