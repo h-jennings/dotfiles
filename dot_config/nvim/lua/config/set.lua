@@ -51,6 +51,7 @@ vim.opt.undofile = true
 -- Split windows
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+vim.opt.splitkeep = "screen"
 
 -- Update time
 vim.opt.updatetime = 250
@@ -84,3 +85,4 @@ vim.o.winborder = "rounded"
 
 -- Diff
 vim.opt.fillchars:append({ diff = "╱" })
+vim.opt.diffopt:append({ "algorithm:histogram" })
