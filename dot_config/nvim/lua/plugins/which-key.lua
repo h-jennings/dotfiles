@@ -29,7 +29,7 @@ return {
 			{ "<leader>f", group = "find" },
 			{ "<leader>x", group = "trouble / lists" },
 			{ "<leader>b", group = "buffer" },
-			{ "<leader>y", group = "yank path" },
+			{ "<leader>y", group = "yank ref" },
 			{ "<leader>c", group = "calls" },
 			{ "<leader>l", group = "lsp" },
 			{ "<leader>t", group = "toggle" },

@@ -131,6 +131,23 @@ vim.keymap.set("n", "<leader>yp", function()
 	copy(file_ref(true, line, line))
 end, { desc = "Copy @abs-file#Lline" })
 
+vim.keymap.set("n", "<leader>yd", function()
+	local line = vim.fn.line(".")
+	local diagnostics = vim.diagnostic.get(0, { lnum = line - 1 })
+	if #diagnostics == 0 then
+		vim.notify("No diagnostics on this line")
+		return
+	end
+	local messages = vim.tbl_map(function(d)
+		return d.source and string.format("%s: %s", d.source, d.message) or d.message
+	end, diagnostics)
+	copy(file_ref(false, line, line) .. "\n" .. table.concat(messages, "\n"))
+end, { desc = "Copy line diagnostics" })
+
+vim.keymap.set("n", "<C-Space>", "van", { remap = true, desc = "Select node" })
+vim.keymap.set("x", "<C-Space>", "an", { remap = true, desc = "Expand selection" })
+vim.keymap.set("x", "<BS>", "in", { remap = true, desc = "Shrink selection" })
+
 vim.keymap.set("x", "<leader>yc", function()
 	local first, last = visual_range()
 	local lines = vim.api.nvim_buf_get_lines(0, first - 1, last, false)
