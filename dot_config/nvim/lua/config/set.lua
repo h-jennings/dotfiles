@@ -58,6 +58,7 @@ vim.opt.updatetime = 250
 
 -- Command line
 vim.opt.showcmd = true
+vim.opt.showmode = false
 vim.opt.cmdheight = 1
 
 -- Backspace behavior
